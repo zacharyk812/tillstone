@@ -1,0 +1,23 @@
+[package]
+name = "tillstone_ffi"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Bridge between the Tillstone Flutter app and the Rust core"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+anyhow = "1"
+flutter_rust_bridge = "=2.13.0"
+pos-core = { path = "../pos-core" }
+pos-sync = { path = "../pos-sync" }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+
+# Generated FFI glue needs `unsafe`, so this crate doesn't inherit the
+# workspace's `unsafe_code = "forbid"`. Business logic never lives here.
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(frb_expand)'] }
