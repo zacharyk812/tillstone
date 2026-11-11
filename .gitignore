@@ -1,0 +1,38 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.idea/
+.vscode/
+*.iml
+*.swp
+
+# Rust
+/target/
+**/target/
+
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+**/Flutter/ephemeral/
+**/Pods/
+*.g.dart.tmp
+
+# Android
+local.properties
+*.jks
+*.keystore
+
+# Secrets and local data (never commit these)
+.env
+.env.*
+*.pem
+*.key
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
