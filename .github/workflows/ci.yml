@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.50.0"
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: Rust (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup update stable && rustup default stable && rustup component add rustfmt clippy
+      - name: Format
+        if: matrix.os == 'ubuntu-latest'
+        run: cargo fmt -p pos-core -p pos-sync --check
+      - name: Lint
+        run: cargo clippy -p pos-core -p pos-sync --all-targets -- -D warnings
+      - name: Test
+        run: cargo test -p pos-core -p pos-sync
+
+  design-system:
+    name: Design system
+    # Golden images are rendered on macOS only, so pixels match exactly.
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: packages/design_system
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Flutter
+        shell: bash
+        run: |
+          git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - run: flutter pub get
+      - name: Tokens are up to date
+        run: dart run tool/generate_tokens.dart --check
+      - run: flutter analyze
+      - run: flutter test
+
+  app:
+    name: App proof (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, platform: linux }
+          - { os: macos-latest, platform: macos }
+          - { os: windows-latest, platform: windows }
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: app
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup update stable && rustup default stable
+      - name: Install Flutter
+        run: |
+          git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Linux desktop dependencies
+        if: matrix.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb
+      - run: flutter pub get
+      - name: Analyze
+        if: matrix.platform == 'linux'
+        run: flutter analyze
+      - name: Run the M0 proof on ${{ matrix.platform }}
+        run: |
+          if [ "${{ matrix.platform }}" = linux ]; then
+            xvfb-run -a flutter test integration_test -d linux
+          else
+            flutter test integration_test -d ${{ matrix.platform }}
+          fi
+
+  android:
+    name: App build (android)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - run: rustup update stable && rustup default stable
+      - name: Install Flutter
+        run: |
+          git clone --depth 1 --branch "$FLUTTER_VERSION" https://github.com/flutter/flutter.git "$RUNNER_TEMP/flutter"
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - run: flutter pub get
+      - run: flutter build apk --debug
