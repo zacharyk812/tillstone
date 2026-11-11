@@ -1,0 +1,26 @@
+name: Feature request
+description: Suggest an idea or improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this solve?
+      description: Describe the situation in your business where this would help.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like to happen?
+  - type: dropdown
+    id: business
+    attributes:
+      label: Business type
+      multiple: true
+      options: [Retail, Quick service, Full-service restaurant, Bar, Hybrid, Other]
+  - type: input
+    id: country
+    attributes:
+      label: Country or region
+      description: Helpful when the request involves taxes, receipts or fiscal rules.

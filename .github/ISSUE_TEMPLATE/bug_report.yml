@@ -1,0 +1,45 @@
+name: Bug report
+description: Something isn't working as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Security problem? Don't file it here.** Follow [SECURITY.md](../blob/main/SECURITY.md) instead.
+        Please don't include customer details, card data, PINs or keys.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Tillstone version
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options: [Android, Windows, Linux, macOS, posd]
+  - type: textarea
+    id: setup
+    attributes:
+      label: Setup
+      description: Number of devices, device roles, printers or card readers involved, country.
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: Attach the redacted diagnostics bundle from the Doctor screen if you can.
