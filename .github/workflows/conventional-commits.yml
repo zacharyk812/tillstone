@@ -1,0 +1,43 @@
+name: Conventional Commits
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title and commit messages
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9._/-]+\))?!?: .{1,100}$'
+          failed=0
+
+          if ! printf '%s\n' "$PR_TITLE" | grep -Eq "$pattern"; then
+            echo "::error::PR title doesn't follow Conventional Commits: $PR_TITLE"
+            failed=1
+          fi
+
+          while IFS= read -r subject; do
+            case "$subject" in Merge\ *) continue ;; esac
+            if ! printf '%s\n' "$subject" | grep -Eq "$pattern"; then
+              echo "::error::Commit doesn't follow Conventional Commits: $subject"
+              failed=1
+            fi
+          done <<EOF
+          $(gh api "repos/$REPO/pulls/$PR/commits" --paginate --jq '.[].commit.message | split("\n")[0]')
+          EOF
+
+          if [ "$failed" -ne 0 ]; then
+            echo "See CONTRIBUTING.md for the format."
+            exit 1
+          fi
+          echo "All good."

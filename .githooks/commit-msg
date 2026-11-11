@@ -1,0 +1,19 @@
+#!/bin/sh
+# Rejects commit messages that don't follow Conventional Commits.
+# Enable with: git config core.hooksPath .githooks
+
+first_line=$(head -n 1 "$1")
+
+case "$first_line" in
+  Merge\ *|Revert\ \"*|fixup!\ *|squash!\ *) exit 0 ;;
+esac
+
+pattern='^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9._/-]+\))?!?: .{1,100}$'
+
+if ! printf '%s\n' "$first_line" | grep -Eq "$pattern"; then
+  echo "Commit message doesn't follow Conventional Commits:" >&2
+  echo "  $first_line" >&2
+  echo "Expected: <type>(<optional scope>): <summary>, e.g. 'feat(sync): resend dropped events'" >&2
+  echo "See CONTRIBUTING.md." >&2
+  exit 1
+fi
