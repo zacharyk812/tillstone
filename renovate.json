@@ -1,0 +1,60 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":semanticCommitTypeAll(build)",
+    "helpers:pinGitHubActionDigests",
+    ":maintainLockFilesMonthly"
+  ],
+  "description": "Supply-chain caution (PLAN §2): wait 14 days before adopting a release, except security fixes.",
+  "timezone": "Etc/UTC",
+  "schedule": ["before 6am on monday"],
+  "minimumReleaseAge": "14 days",
+  "internalChecksFilter": "strict",
+  "prConcurrentLimit": 5,
+  "labels": ["dependencies"],
+  "dependencyDashboard": true,
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["dependencies", "security"],
+    "minimumReleaseAge": null,
+    "schedule": ["at any time"]
+  },
+  "packageRules": [
+    {
+      "description": "Rust crates, the Dart package and the codegen version must always match.",
+      "groupName": "flutter_rust_bridge",
+      "matchPackageNames": ["flutter_rust_bridge", "flutter_rust_bridge_codegen"]
+    },
+    {
+      "description": "iroh crates are released together.",
+      "groupName": "iroh",
+      "matchPackageNames": ["iroh", "iroh-*"]
+    },
+    {
+      "description": "Major updates need a human decision and often a decision record.",
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true
+    }
+  ],
+  "customManagers": [
+    {
+      "description": "Flutter SDK version used in CI.",
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.github/workflows/.+\\.ya?ml$/"],
+      "matchStrings": ["FLUTTER_VERSION: \"(?<currentValue>[^\"]+)\""],
+      "depNameTemplate": "flutter",
+      "packageNameTemplate": "flutter/flutter",
+      "datasourceTemplate": "github-tags"
+    },
+    {
+      "description": "flutter_rust_bridge_codegen version in the contributing guide.",
+      "customType": "regex",
+      "managerFilePatterns": ["/^CONTRIBUTING\\.md$/"],
+      "matchStrings": ["flutter_rust_bridge_codegen --version (?<currentValue>[0-9.]+)"],
+      "depNameTemplate": "flutter_rust_bridge_codegen",
+      "datasourceTemplate": "crate"
+    }
+  ]
+}
