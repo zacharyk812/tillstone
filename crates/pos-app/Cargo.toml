@@ -1,0 +1,18 @@
+[package]
+name = "pos-app"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Tillstone application services: setup, sign-in, orders, payments and shifts"
+
+[dependencies]
+argon2 = "0.6.0"
+getrandom = "0.4.3"
+pos-core = { version = "0.0.1", path = "../pos-core" }
+pos-store = { version = "0.0.1", path = "../pos-store" }
+uuid = "1.29.0"
+
+[lints]
+workspace = true
