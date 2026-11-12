@@ -4,6 +4,7 @@
 // ignore_for_file: unused_import, unused_element, unnecessary_import, duplicate_ignore, invalid_use_of_internal_member, annotate_overrides, non_constant_identifier_names, curly_braces_in_flow_control_structures, prefer_const_literals_to_create_immutables, unused_field
 
 import 'api/core.dart';
+import 'api/register.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -69,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => 1473351803;
+  int get rustContentHash => 1118259096;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -81,6 +82,113 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
 }
 
 abstract class RustLibApi extends BaseApi {
+  Future<String> crateApiRegisterTillAddItem({
+    required Till that,
+    required String orderId,
+    required String itemId,
+    String? variantId,
+    required List<String> optionIds,
+    required PlatformInt64 quantity,
+  });
+
+  String crateApiRegisterTillBusinessName({required Till that});
+
+  Future<void> crateApiRegisterTillCheckpoint({required Till that});
+
+  Future<ShiftView> crateApiRegisterTillCloseShift({
+    required Till that,
+    required String shiftId,
+    required PlatformInt64 countedMinor,
+  });
+
+  Future<Till> crateApiRegisterTillCreateDemo({
+    required String dbPath,
+    required List<int> dbKey,
+    required List<int> deviceSecret,
+    required List<int> ownerSecret,
+  });
+
+  List<(String, String)> crateApiRegisterTillDemoPins({required Till that});
+
+  Future<void> crateApiRegisterTillDiscount({
+    required Till that,
+    required String orderId,
+    required String name,
+    required int basisPoints,
+    String? approverPin,
+  });
+
+  List<ItemView> crateApiRegisterTillItems({
+    required Till that,
+    required String centerId,
+  });
+
+  Future<Till> crateApiRegisterTillOpen({
+    required String dbPath,
+    required List<int> dbKey,
+    required List<int> deviceSecret,
+  });
+
+  Future<String> crateApiRegisterTillOpenOrder({
+    required Till that,
+    required String centerId,
+    required String fulfillment,
+  });
+
+  Future<String> crateApiRegisterTillOpenShift({
+    required Till that,
+    required PlatformInt64 floatMinor,
+  });
+
+  OrderView? crateApiRegisterTillOrder({
+    required Till that,
+    required String orderId,
+  });
+
+  Future<CashView> crateApiRegisterTillPayCash({
+    required Till that,
+    required String orderId,
+    required PlatformInt64 givenMinor,
+  });
+
+  ReportView crateApiRegisterTillReport({required Till that});
+
+  List<CenterView> crateApiRegisterTillRevenueCenters({required Till that});
+
+  Future<void> crateApiRegisterTillSend({
+    required Till that,
+    required String orderId,
+  });
+
+  Future<void> crateApiRegisterTillSetQuantity({
+    required Till that,
+    required String orderId,
+    required String lineId,
+    required PlatformInt64 quantity,
+  });
+
+  void crateApiRegisterTillSetTraining({required Till that, required bool on_});
+
+  Future<StaffView> crateApiRegisterTillSignIn({
+    required Till that,
+    required String pin,
+    String? staffId,
+  });
+
+  void crateApiRegisterTillSignOut({required Till that});
+
+  StaffView? crateApiRegisterTillSignedIn({required Till that});
+
+  List<StaffView> crateApiRegisterTillStaff({required Till that});
+
+  bool crateApiRegisterTillTraining({required Till that});
+
+  Future<void> crateApiRegisterTillVoidOrder({
+    required Till that,
+    required String orderId,
+    required String reason,
+  });
+
   String crateApiCoreCoreVersion();
 
   Future<void> crateApiCoreInitApp();
@@ -91,6 +199,12 @@ abstract class RustLibApi extends BaseApi {
     required PlatformInt64 amountMinor,
     required int parts,
   });
+
+  RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Till;
+
+  RustArcDecrementStrongCountFnType get rust_arc_decrement_strong_count_Till;
+
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TillPtr;
 }
 
 class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
@@ -102,12 +216,841 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   });
 
   @override
+  Future<String> crateApiRegisterTillAddItem({
+    required Till that,
+    required String orderId,
+    required String itemId,
+    String? variantId,
+    required List<String> optionIds,
+    required PlatformInt64 quantity,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(orderId, serializer);
+          sse_encode_String(itemId, serializer);
+          sse_encode_opt_String(variantId, serializer);
+          sse_encode_list_String(optionIds, serializer);
+          sse_encode_i_64(quantity, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 1,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillAddItemConstMeta,
+        argValues: [that, orderId, itemId, variantId, optionIds, quantity],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillAddItemConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_add_item",
+        argNames: [
+          "that",
+          "orderId",
+          "itemId",
+          "variantId",
+          "optionIds",
+          "quantity",
+        ],
+      );
+
+  @override
+  String crateApiRegisterTillBusinessName({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 2)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillBusinessNameConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillBusinessNameConstMeta =>
+      const TaskConstMeta(debugName: "Till_business_name", argNames: ["that"]);
+
+  @override
+  Future<void> crateApiRegisterTillCheckpoint({required Till that}) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 3,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillCheckpointConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillCheckpointConstMeta =>
+      const TaskConstMeta(debugName: "Till_checkpoint", argNames: ["that"]);
+
+  @override
+  Future<ShiftView> crateApiRegisterTillCloseShift({
+    required Till that,
+    required String shiftId,
+    required PlatformInt64 countedMinor,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(shiftId, serializer);
+          sse_encode_i_64(countedMinor, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 4,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_shift_view,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillCloseShiftConstMeta,
+        argValues: [that, shiftId, countedMinor],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillCloseShiftConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_close_shift",
+        argNames: ["that", "shiftId", "countedMinor"],
+      );
+
+  @override
+  Future<Till> crateApiRegisterTillCreateDemo({
+    required String dbPath,
+    required List<int> dbKey,
+    required List<int> deviceSecret,
+    required List<int> ownerSecret,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(dbPath, serializer);
+          sse_encode_list_prim_u_8_loose(dbKey, serializer);
+          sse_encode_list_prim_u_8_loose(deviceSecret, serializer);
+          sse_encode_list_prim_u_8_loose(ownerSecret, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 5,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillCreateDemoConstMeta,
+        argValues: [dbPath, dbKey, deviceSecret, ownerSecret],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillCreateDemoConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_create_demo",
+        argNames: ["dbPath", "dbKey", "deviceSecret", "ownerSecret"],
+      );
+
+  @override
+  List<(String, String)> crateApiRegisterTillDemoPins({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_record_string_string,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillDemoPinsConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillDemoPinsConstMeta =>
+      const TaskConstMeta(debugName: "Till_demo_pins", argNames: ["that"]);
+
+  @override
+  Future<void> crateApiRegisterTillDiscount({
+    required Till that,
+    required String orderId,
+    required String name,
+    required int basisPoints,
+    String? approverPin,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(orderId, serializer);
+          sse_encode_String(name, serializer);
+          sse_encode_i_32(basisPoints, serializer);
+          sse_encode_opt_String(approverPin, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 7,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillDiscountConstMeta,
+        argValues: [that, orderId, name, basisPoints, approverPin],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillDiscountConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_discount",
+        argNames: ["that", "orderId", "name", "basisPoints", "approverPin"],
+      );
+
+  @override
+  List<ItemView> crateApiRegisterTillItems({
+    required Till that,
+    required String centerId,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(centerId, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_item_view,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillItemsConstMeta,
+        argValues: [that, centerId],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillItemsConstMeta => const TaskConstMeta(
+    debugName: "Till_items",
+    argNames: ["that", "centerId"],
+  );
+
+  @override
+  Future<Till> crateApiRegisterTillOpen({
+    required String dbPath,
+    required List<int> dbKey,
+    required List<int> deviceSecret,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(dbPath, serializer);
+          sse_encode_list_prim_u_8_loose(dbKey, serializer);
+          sse_encode_list_prim_u_8_loose(deviceSecret, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 9,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillOpenConstMeta,
+        argValues: [dbPath, dbKey, deviceSecret],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillOpenConstMeta => const TaskConstMeta(
+    debugName: "Till_open",
+    argNames: ["dbPath", "dbKey", "deviceSecret"],
+  );
+
+  @override
+  Future<String> crateApiRegisterTillOpenOrder({
+    required Till that,
+    required String centerId,
+    required String fulfillment,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(centerId, serializer);
+          sse_encode_String(fulfillment, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 10,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillOpenOrderConstMeta,
+        argValues: [that, centerId, fulfillment],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillOpenOrderConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_open_order",
+        argNames: ["that", "centerId", "fulfillment"],
+      );
+
+  @override
+  Future<String> crateApiRegisterTillOpenShift({
+    required Till that,
+    required PlatformInt64 floatMinor,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_i_64(floatMinor, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 11,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillOpenShiftConstMeta,
+        argValues: [that, floatMinor],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillOpenShiftConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_open_shift",
+        argNames: ["that", "floatMinor"],
+      );
+
+  @override
+  OrderView? crateApiRegisterTillOrder({
+    required Till that,
+    required String orderId,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(orderId, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_box_autoadd_order_view,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillOrderConstMeta,
+        argValues: [that, orderId],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillOrderConstMeta => const TaskConstMeta(
+    debugName: "Till_order",
+    argNames: ["that", "orderId"],
+  );
+
+  @override
+  Future<CashView> crateApiRegisterTillPayCash({
+    required Till that,
+    required String orderId,
+    required PlatformInt64 givenMinor,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(orderId, serializer);
+          sse_encode_i_64(givenMinor, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 13,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_cash_view,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillPayCashConstMeta,
+        argValues: [that, orderId, givenMinor],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillPayCashConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_pay_cash",
+        argNames: ["that", "orderId", "givenMinor"],
+      );
+
+  @override
+  ReportView crateApiRegisterTillReport({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_report_view,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillReportConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillReportConstMeta =>
+      const TaskConstMeta(debugName: "Till_report", argNames: ["that"]);
+
+  @override
+  List<CenterView> crateApiRegisterTillRevenueCenters({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_center_view,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillRevenueCentersConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillRevenueCentersConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_revenue_centers",
+        argNames: ["that"],
+      );
+
+  @override
+  Future<void> crateApiRegisterTillSend({
+    required Till that,
+    required String orderId,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(orderId, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 16,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillSendConstMeta,
+        argValues: [that, orderId],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillSendConstMeta => const TaskConstMeta(
+    debugName: "Till_send",
+    argNames: ["that", "orderId"],
+  );
+
+  @override
+  Future<void> crateApiRegisterTillSetQuantity({
+    required Till that,
+    required String orderId,
+    required String lineId,
+    required PlatformInt64 quantity,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(orderId, serializer);
+          sse_encode_String(lineId, serializer);
+          sse_encode_i_64(quantity, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 17,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillSetQuantityConstMeta,
+        argValues: [that, orderId, lineId, quantity],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillSetQuantityConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_set_quantity",
+        argNames: ["that", "orderId", "lineId", "quantity"],
+      );
+
+  @override
+  void crateApiRegisterTillSetTraining({
+    required Till that,
+    required bool on_,
+  }) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_bool(on_, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillSetTrainingConstMeta,
+        argValues: [that, on_],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillSetTrainingConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_set_training",
+        argNames: ["that", "on_"],
+      );
+
+  @override
+  Future<StaffView> crateApiRegisterTillSignIn({
+    required Till that,
+    required String pin,
+    String? staffId,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(pin, serializer);
+          sse_encode_opt_String(staffId, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 19,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_staff_view,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillSignInConstMeta,
+        argValues: [that, pin, staffId],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillSignInConstMeta => const TaskConstMeta(
+    debugName: "Till_sign_in",
+    argNames: ["that", "pin", "staffId"],
+  );
+
+  @override
+  void crateApiRegisterTillSignOut({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillSignOutConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillSignOutConstMeta =>
+      const TaskConstMeta(debugName: "Till_sign_out", argNames: ["that"]);
+
+  @override
+  StaffView? crateApiRegisterTillSignedIn({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_box_autoadd_staff_view,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillSignedInConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillSignedInConstMeta =>
+      const TaskConstMeta(debugName: "Till_signed_in", argNames: ["that"]);
+
+  @override
+  List<StaffView> crateApiRegisterTillStaff({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_staff_view,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillStaffConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillStaffConstMeta =>
+      const TaskConstMeta(debugName: "Till_staff", argNames: ["that"]);
+
+  @override
+  bool crateApiRegisterTillTraining({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_bool,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillTrainingConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillTrainingConstMeta =>
+      const TaskConstMeta(debugName: "Till_training", argNames: ["that"]);
+
+  @override
+  Future<void> crateApiRegisterTillVoidOrder({
+    required Till that,
+    required String orderId,
+    required String reason,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_String(orderId, serializer);
+          sse_encode_String(reason, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 24,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_unit,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillVoidOrderConstMeta,
+        argValues: [that, orderId, reason],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillVoidOrderConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_void_order",
+        argNames: ["that", "orderId", "reason"],
+      );
+
+  @override
   String crateApiCoreCoreVersion() {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 1)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -132,7 +1075,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 2,
+            funcId: 26,
             port: port_,
           );
         },
@@ -159,7 +1102,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 3,
+            funcId: 27,
             port: port_,
           );
         },
@@ -188,7 +1131,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_i_64(amountMinor, serializer);
           sse_encode_u_32(parts, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 4)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_String,
@@ -206,6 +1149,41 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     argNames: ["amountMinor", "parts"],
   );
 
+  RustArcIncrementStrongCountFnType
+  get rust_arc_increment_strong_count_Till => wire
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill;
+
+  RustArcDecrementStrongCountFnType
+  get rust_arc_decrement_strong_count_Till => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill;
+
+  @protected
+  Till
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TillImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  Till
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TillImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
+  @protected
+  Till
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    dynamic raw,
+  ) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return TillImpl.frbInternalDcoDecode(raw as List<dynamic>);
+  }
+
   @protected
   String dco_decode_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
@@ -219,9 +1197,89 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_i_64(raw);
+  }
+
+  @protected
+  OrderView dco_decode_box_autoadd_order_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_order_view(raw);
+  }
+
+  @protected
+  StaffView dco_decode_box_autoadd_staff_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_staff_view(raw);
+  }
+
+  @protected
+  CashView dco_decode_cash_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return CashView(
+      change: dco_decode_String(arr[0]),
+      closed: dco_decode_bool(arr[1]),
+    );
+  }
+
+  @protected
+  CenterView dco_decode_center_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return CenterView(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      mode: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
+  int dco_decode_i_32(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as int;
+  }
+
+  @protected
   PlatformInt64 dco_decode_i_64(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dcoDecodeI64(raw);
+  }
+
+  @protected
+  ItemView dco_decode_item_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return ItemView(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      price: dco_decode_String(arr[2]),
+      variants: dco_decode_list_option_view(arr[3]),
+      optionGroups: dco_decode_list_option_group_view(arr[4]),
+      stock: dco_decode_opt_box_autoadd_i_64(arr[5]),
+    );
+  }
+
+  @protected
+  LineView dco_decode_line_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return LineView(
+      id: dco_decode_String(arr[0]),
+      quantity: dco_decode_i_64(arr[1]),
+      name: dco_decode_String(arr[2]),
+      details: dco_decode_list_String(arr[3]),
+      amount: dco_decode_String(arr[4]),
+    );
   }
 
   @protected
@@ -231,9 +1289,129 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<CenterView> dco_decode_list_center_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_center_view).toList();
+  }
+
+  @protected
+  List<ItemView> dco_decode_list_item_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_item_view).toList();
+  }
+
+  @protected
+  List<LineView> dco_decode_list_line_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_line_view).toList();
+  }
+
+  @protected
+  List<OptionGroupView> dco_decode_list_option_group_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_option_group_view).toList();
+  }
+
+  @protected
+  List<OptionView> dco_decode_list_option_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_option_view).toList();
+  }
+
+  @protected
+  List<int> dco_decode_list_prim_u_8_loose(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as List<int>;
+  }
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint8List;
+  }
+
+  @protected
+  List<(String, String)> dco_decode_list_record_string_string(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_record_string_string).toList();
+  }
+
+  @protected
+  List<StaffView> dco_decode_list_staff_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_staff_view).toList();
+  }
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_String(raw);
+  }
+
+  @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_i_64(raw);
+  }
+
+  @protected
+  OrderView? dco_decode_opt_box_autoadd_order_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_order_view(raw);
+  }
+
+  @protected
+  StaffView? dco_decode_opt_box_autoadd_staff_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_staff_view(raw);
+  }
+
+  @protected
+  OptionGroupView dco_decode_option_group_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return OptionGroupView(
+      name: dco_decode_String(arr[0]),
+      min: dco_decode_u_8(arr[1]),
+      max: dco_decode_u_8(arr[2]),
+      options: dco_decode_list_option_view(arr[3]),
+    );
+  }
+
+  @protected
+  OptionView dco_decode_option_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 3)
+      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
+    return OptionView(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      price: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
+  OrderView dco_decode_order_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 11)
+      throw Exception('unexpected arr length: expect 11 but see ${arr.length}');
+    return OrderView(
+      id: dco_decode_String(arr[0]),
+      number: dco_decode_String(arr[1]),
+      lines: dco_decode_list_line_view(arr[2]),
+      subtotal: dco_decode_String(arr[3]),
+      discount: dco_decode_opt_String(arr[4]),
+      taxes: dco_decode_list_record_string_string(arr[5]),
+      total: dco_decode_String(arr[6]),
+      totalMinor: dco_decode_i_64(arr[7]),
+      balance: dco_decode_String(arr[8]),
+      balanceMinor: dco_decode_i_64(arr[9]),
+      closed: dco_decode_bool(arr[10]),
+    );
   }
 
   @protected
@@ -248,6 +1426,59 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       message: dco_decode_String(arr[2]),
       roundTripMs: dco_decode_u_64(arr[3]),
       outsiderRefused: dco_decode_bool(arr[4]),
+    );
+  }
+
+  @protected
+  (String, String) dco_decode_record_string_string(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2) {
+      throw Exception('Expected 2 elements, got ${arr.length}');
+    }
+    return (dco_decode_String(arr[0]), dco_decode_String(arr[1]));
+  }
+
+  @protected
+  ReportView dco_decode_report_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 5)
+      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
+    return ReportView(
+      orders: dco_decode_u_32(arr[0]),
+      total: dco_decode_String(arr[1]),
+      tips: dco_decode_String(arr[2]),
+      refunds: dco_decode_String(arr[3]),
+      byTender: dco_decode_list_record_string_string(arr[4]),
+    );
+  }
+
+  @protected
+  ShiftView dco_decode_shift_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return ShiftView(
+      id: dco_decode_String(arr[0]),
+      expected: dco_decode_String(arr[1]),
+      counted: dco_decode_opt_String(arr[2]),
+      variance: dco_decode_opt_String(arr[3]),
+    );
+  }
+
+  @protected
+  StaffView dco_decode_staff_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 4)
+      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
+    return StaffView(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      initials: dco_decode_String(arr[2]),
+      role: dco_decode_String(arr[3]),
     );
   }
 
@@ -276,6 +1507,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  BigInt dco_decode_usize(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dcoDecodeU64(raw);
+  }
+
+  @protected
+  Till
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return TillImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  Till
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return TillImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
+  Till
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return TillImpl.frbInternalSseDecode(
+      sse_decode_usize(deserializer),
+      sse_decode_i_32(deserializer),
+    );
+  }
+
+  @protected
   String sse_decode_String(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_list_prim_u_8_strict(deserializer);
@@ -289,9 +1562,86 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_i_64(deserializer));
+  }
+
+  @protected
+  OrderView sse_decode_box_autoadd_order_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_order_view(deserializer));
+  }
+
+  @protected
+  StaffView sse_decode_box_autoadd_staff_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_staff_view(deserializer));
+  }
+
+  @protected
+  CashView sse_decode_cash_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_change = sse_decode_String(deserializer);
+    var var_closed = sse_decode_bool(deserializer);
+    return CashView(change: var_change, closed: var_closed);
+  }
+
+  @protected
+  CenterView sse_decode_center_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_mode = sse_decode_String(deserializer);
+    return CenterView(id: var_id, name: var_name, mode: var_mode);
+  }
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return deserializer.buffer.getInt32();
+  }
+
+  @protected
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getPlatformInt64();
+  }
+
+  @protected
+  ItemView sse_decode_item_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_price = sse_decode_String(deserializer);
+    var var_variants = sse_decode_list_option_view(deserializer);
+    var var_optionGroups = sse_decode_list_option_group_view(deserializer);
+    var var_stock = sse_decode_opt_box_autoadd_i_64(deserializer);
+    return ItemView(
+      id: var_id,
+      name: var_name,
+      price: var_price,
+      variants: var_variants,
+      optionGroups: var_optionGroups,
+      stock: var_stock,
+    );
+  }
+
+  @protected
+  LineView sse_decode_line_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_quantity = sse_decode_i_64(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_details = sse_decode_list_String(deserializer);
+    var var_amount = sse_decode_String(deserializer);
+    return LineView(
+      id: var_id,
+      quantity: var_quantity,
+      name: var_name,
+      details: var_details,
+      amount: var_amount,
+    );
   }
 
   @protected
@@ -307,10 +1657,206 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<CenterView> sse_decode_list_center_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <CenterView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_center_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<ItemView> sse_decode_list_item_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <ItemView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_item_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<LineView> sse_decode_list_line_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <LineView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_line_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<OptionGroupView> sse_decode_list_option_group_view(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <OptionGroupView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_option_group_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<OptionView> sse_decode_list_option_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <OptionView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_option_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var len_ = sse_decode_i_32(deserializer);
+    return deserializer.buffer.getUint8List(len_);
+  }
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
     return deserializer.buffer.getUint8List(len_);
+  }
+
+  @protected
+  List<(String, String)> sse_decode_list_record_string_string(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <(String, String)>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_record_string_string(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<StaffView> sse_decode_list_staff_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <StaffView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_staff_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_String(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_i_64(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  OrderView? sse_decode_opt_box_autoadd_order_view(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_order_view(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  StaffView? sse_decode_opt_box_autoadd_staff_view(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_staff_view(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  OptionGroupView sse_decode_option_group_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_name = sse_decode_String(deserializer);
+    var var_min = sse_decode_u_8(deserializer);
+    var var_max = sse_decode_u_8(deserializer);
+    var var_options = sse_decode_list_option_view(deserializer);
+    return OptionGroupView(
+      name: var_name,
+      min: var_min,
+      max: var_max,
+      options: var_options,
+    );
+  }
+
+  @protected
+  OptionView sse_decode_option_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_price = sse_decode_String(deserializer);
+    return OptionView(id: var_id, name: var_name, price: var_price);
+  }
+
+  @protected
+  OrderView sse_decode_order_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_number = sse_decode_String(deserializer);
+    var var_lines = sse_decode_list_line_view(deserializer);
+    var var_subtotal = sse_decode_String(deserializer);
+    var var_discount = sse_decode_opt_String(deserializer);
+    var var_taxes = sse_decode_list_record_string_string(deserializer);
+    var var_total = sse_decode_String(deserializer);
+    var var_totalMinor = sse_decode_i_64(deserializer);
+    var var_balance = sse_decode_String(deserializer);
+    var var_balanceMinor = sse_decode_i_64(deserializer);
+    var var_closed = sse_decode_bool(deserializer);
+    return OrderView(
+      id: var_id,
+      number: var_number,
+      lines: var_lines,
+      subtotal: var_subtotal,
+      discount: var_discount,
+      taxes: var_taxes,
+      total: var_total,
+      totalMinor: var_totalMinor,
+      balance: var_balance,
+      balanceMinor: var_balanceMinor,
+      closed: var_closed,
+    );
   }
 
   @protected
@@ -327,6 +1873,63 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       message: var_message,
       roundTripMs: var_roundTripMs,
       outsiderRefused: var_outsiderRefused,
+    );
+  }
+
+  @protected
+  (String, String) sse_decode_record_string_string(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_field0 = sse_decode_String(deserializer);
+    var var_field1 = sse_decode_String(deserializer);
+    return (var_field0, var_field1);
+  }
+
+  @protected
+  ReportView sse_decode_report_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_orders = sse_decode_u_32(deserializer);
+    var var_total = sse_decode_String(deserializer);
+    var var_tips = sse_decode_String(deserializer);
+    var var_refunds = sse_decode_String(deserializer);
+    var var_byTender = sse_decode_list_record_string_string(deserializer);
+    return ReportView(
+      orders: var_orders,
+      total: var_total,
+      tips: var_tips,
+      refunds: var_refunds,
+      byTender: var_byTender,
+    );
+  }
+
+  @protected
+  ShiftView sse_decode_shift_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_expected = sse_decode_String(deserializer);
+    var var_counted = sse_decode_opt_String(deserializer);
+    var var_variance = sse_decode_opt_String(deserializer);
+    return ShiftView(
+      id: var_id,
+      expected: var_expected,
+      counted: var_counted,
+      variance: var_variance,
+    );
+  }
+
+  @protected
+  StaffView sse_decode_staff_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_initials = sse_decode_String(deserializer);
+    var var_role = sse_decode_String(deserializer);
+    return StaffView(
+      id: var_id,
+      name: var_name,
+      initials: var_initials,
+      role: var_role,
     );
   }
 
@@ -354,9 +1957,48 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  int sse_decode_i_32(SseDeserializer deserializer) {
+  BigInt sse_decode_usize(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    return deserializer.buffer.getInt32();
+    return deserializer.buffer.getBigUint64();
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    Till self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as TillImpl).frbInternalSseEncode(move: true),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    Till self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as TillImpl).frbInternalSseEncode(move: false),
+      serializer,
+    );
+  }
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    Till self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_usize(
+      (self as TillImpl).frbInternalSseEncode(move: null),
+      serializer,
+    );
   }
 
   @protected
@@ -372,9 +2014,78 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_i_64(
+    PlatformInt64 self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_64(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_order_view(
+    OrderView self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_order_view(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_staff_view(
+    StaffView self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_staff_view(self, serializer);
+  }
+
+  @protected
+  void sse_encode_cash_view(CashView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.change, serializer);
+    sse_encode_bool(self.closed, serializer);
+  }
+
+  @protected
+  void sse_encode_center_view(CenterView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.mode, serializer);
+  }
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    serializer.buffer.putInt32(self);
+  }
+
+  @protected
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putPlatformInt64(self);
+  }
+
+  @protected
+  void sse_encode_item_view(ItemView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.price, serializer);
+    sse_encode_list_option_view(self.variants, serializer);
+    sse_encode_list_option_group_view(self.optionGroups, serializer);
+    sse_encode_opt_box_autoadd_i_64(self.stock, serializer);
+  }
+
+  @protected
+  void sse_encode_line_view(LineView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_i_64(self.quantity, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_list_String(self.details, serializer);
+    sse_encode_String(self.amount, serializer);
   }
 
   @protected
@@ -384,6 +2095,78 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     for (final item in self) {
       sse_encode_String(item, serializer);
     }
+  }
+
+  @protected
+  void sse_encode_list_center_view(
+    List<CenterView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_center_view(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_item_view(
+    List<ItemView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_item_view(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_line_view(
+    List<LineView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_line_view(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_option_group_view(
+    List<OptionGroupView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_option_group_view(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_option_view(
+    List<OptionView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_option_view(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_prim_u_8_loose(
+    List<int> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    serializer.buffer.putUint8List(
+      self is Uint8List ? self : Uint8List.fromList(self),
+    );
   }
 
   @protected
@@ -397,6 +2180,115 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_record_string_string(
+    List<(String, String)> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_record_string_string(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_staff_view(
+    List<StaffView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_staff_view(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_String(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_64(
+    PlatformInt64? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_i_64(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_order_view(
+    OrderView? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_order_view(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_staff_view(
+    StaffView? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_staff_view(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_option_group_view(
+    OptionGroupView self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.name, serializer);
+    sse_encode_u_8(self.min, serializer);
+    sse_encode_u_8(self.max, serializer);
+    sse_encode_list_option_view(self.options, serializer);
+  }
+
+  @protected
+  void sse_encode_option_view(OptionView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.price, serializer);
+  }
+
+  @protected
+  void sse_encode_order_view(OrderView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.number, serializer);
+    sse_encode_list_line_view(self.lines, serializer);
+    sse_encode_String(self.subtotal, serializer);
+    sse_encode_opt_String(self.discount, serializer);
+    sse_encode_list_record_string_string(self.taxes, serializer);
+    sse_encode_String(self.total, serializer);
+    sse_encode_i_64(self.totalMinor, serializer);
+    sse_encode_String(self.balance, serializer);
+    sse_encode_i_64(self.balanceMinor, serializer);
+    sse_encode_bool(self.closed, serializer);
+  }
+
+  @protected
   void sse_encode_peer_self_test(PeerSelfTest self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.sender, serializer);
@@ -404,6 +2296,44 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.message, serializer);
     sse_encode_u_64(self.roundTripMs, serializer);
     sse_encode_bool(self.outsiderRefused, serializer);
+  }
+
+  @protected
+  void sse_encode_record_string_string(
+    (String, String) self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.$1, serializer);
+    sse_encode_String(self.$2, serializer);
+  }
+
+  @protected
+  void sse_encode_report_view(ReportView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_u_32(self.orders, serializer);
+    sse_encode_String(self.total, serializer);
+    sse_encode_String(self.tips, serializer);
+    sse_encode_String(self.refunds, serializer);
+    sse_encode_list_record_string_string(self.byTender, serializer);
+  }
+
+  @protected
+  void sse_encode_shift_view(ShiftView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.expected, serializer);
+    sse_encode_opt_String(self.counted, serializer);
+    sse_encode_opt_String(self.variance, serializer);
+  }
+
+  @protected
+  void sse_encode_staff_view(StaffView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.initials, serializer);
+    sse_encode_String(self.role, serializer);
   }
 
   @protected
@@ -430,8 +2360,152 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_i_32(int self, SseSerializer serializer) {
+  void sse_encode_usize(BigInt self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
-    serializer.buffer.putInt32(self);
+    serializer.buffer.putBigUint64(self);
   }
+}
+
+@sealed
+class TillImpl extends RustOpaque implements Till {
+  // Not to be used by end users
+  TillImpl.frbInternalDcoDecode(List<dynamic> wire)
+    : super.frbInternalDcoDecode(wire, _kStaticData);
+
+  // Not to be used by end users
+  TillImpl.frbInternalSseDecode(BigInt ptr, int externalSizeOnNative)
+    : super.frbInternalSseDecode(ptr, externalSizeOnNative, _kStaticData);
+
+  static final _kStaticData = RustArcStaticData(
+    rustArcIncrementStrongCount:
+        RustLib.instance.api.rust_arc_increment_strong_count_Till,
+    rustArcDecrementStrongCount:
+        RustLib.instance.api.rust_arc_decrement_strong_count_Till,
+    rustArcDecrementStrongCountPtr:
+        RustLib.instance.api.rust_arc_decrement_strong_count_TillPtr,
+  );
+
+  Future<String> addItem({
+    required String orderId,
+    required String itemId,
+    String? variantId,
+    required List<String> optionIds,
+    required PlatformInt64 quantity,
+  }) => RustLib.instance.api.crateApiRegisterTillAddItem(
+    that: this,
+    orderId: orderId,
+    itemId: itemId,
+    variantId: variantId,
+    optionIds: optionIds,
+    quantity: quantity,
+  );
+
+  String businessName() =>
+      RustLib.instance.api.crateApiRegisterTillBusinessName(that: this);
+
+  /// Saves a checkpoint for fast startup (call when going idle).
+  Future<void> checkpoint() =>
+      RustLib.instance.api.crateApiRegisterTillCheckpoint(that: this);
+
+  Future<ShiftView> closeShift({
+    required String shiftId,
+    required PlatformInt64 countedMinor,
+  }) => RustLib.instance.api.crateApiRegisterTillCloseShift(
+    that: this,
+    shiftId: shiftId,
+    countedMinor: countedMinor,
+  );
+
+  List<(String, String)> demoPins() =>
+      RustLib.instance.api.crateApiRegisterTillDemoPins(that: this);
+
+  Future<void> discount({
+    required String orderId,
+    required String name,
+    required int basisPoints,
+    String? approverPin,
+  }) => RustLib.instance.api.crateApiRegisterTillDiscount(
+    that: this,
+    orderId: orderId,
+    name: name,
+    basisPoints: basisPoints,
+    approverPin: approverPin,
+  );
+
+  List<ItemView> items({required String centerId}) => RustLib.instance.api
+      .crateApiRegisterTillItems(that: this, centerId: centerId);
+
+  Future<String> openOrder({
+    required String centerId,
+    required String fulfillment,
+  }) => RustLib.instance.api.crateApiRegisterTillOpenOrder(
+    that: this,
+    centerId: centerId,
+    fulfillment: fulfillment,
+  );
+
+  Future<String> openShift({required PlatformInt64 floatMinor}) => RustLib
+      .instance
+      .api
+      .crateApiRegisterTillOpenShift(that: this, floatMinor: floatMinor);
+
+  OrderView? order({required String orderId}) => RustLib.instance.api
+      .crateApiRegisterTillOrder(that: this, orderId: orderId);
+
+  Future<CashView> payCash({
+    required String orderId,
+    required PlatformInt64 givenMinor,
+  }) => RustLib.instance.api.crateApiRegisterTillPayCash(
+    that: this,
+    orderId: orderId,
+    givenMinor: givenMinor,
+  );
+
+  ReportView report() =>
+      RustLib.instance.api.crateApiRegisterTillReport(that: this);
+
+  List<CenterView> revenueCenters() =>
+      RustLib.instance.api.crateApiRegisterTillRevenueCenters(that: this);
+
+  Future<void> send({required String orderId}) => RustLib.instance.api
+      .crateApiRegisterTillSend(that: this, orderId: orderId);
+
+  Future<void> setQuantity({
+    required String orderId,
+    required String lineId,
+    required PlatformInt64 quantity,
+  }) => RustLib.instance.api.crateApiRegisterTillSetQuantity(
+    that: this,
+    orderId: orderId,
+    lineId: lineId,
+    quantity: quantity,
+  );
+
+  void setTraining({required bool on_}) => RustLib.instance.api
+      .crateApiRegisterTillSetTraining(that: this, on_: on_);
+
+  /// Signs in by PIN; Argon2 is slow on purpose, so this runs off the UI thread.
+  Future<StaffView> signIn({required String pin, String? staffId}) => RustLib
+      .instance
+      .api
+      .crateApiRegisterTillSignIn(that: this, pin: pin, staffId: staffId);
+
+  void signOut() =>
+      RustLib.instance.api.crateApiRegisterTillSignOut(that: this);
+
+  StaffView? signedIn() =>
+      RustLib.instance.api.crateApiRegisterTillSignedIn(that: this);
+
+  List<StaffView> staff() =>
+      RustLib.instance.api.crateApiRegisterTillStaff(that: this);
+
+  bool training() =>
+      RustLib.instance.api.crateApiRegisterTillTraining(that: this);
+
+  Future<void> voidOrder({required String orderId, required String reason}) =>
+      RustLib.instance.api.crateApiRegisterTillVoidOrder(
+        that: this,
+        orderId: orderId,
+        reason: reason,
+      );
 }

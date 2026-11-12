@@ -3607,9 +3607,12 @@ name = "tillstone_ffi"
 version = "0.0.1"
 dependencies = [
  "flutter_rust_bridge",
+ "pos-app",
  "pos-core",
+ "pos-store",
  "pos-sync",
  "tokio",
+ "uuid",
 ]
 
 [[package]]
