@@ -138,6 +138,7 @@ class PosTopBar extends StatelessWidget {
     required this.syncLabel,
     required this.staffName,
     required this.staffInitials,
+    this.onLock,
   });
 
   final Widget? leading;
@@ -146,6 +147,7 @@ class PosTopBar extends StatelessWidget {
   final String syncLabel;
   final String staffName;
   final String staffInitials;
+  final VoidCallback? onLock;
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +187,7 @@ class PosTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: PosSpacing.sm),
-          PosIconButton(icon: Icons.lock_outline, label: 'Lock', onPressed: () {}),
+          PosIconButton(icon: Icons.lock_outline, label: 'Lock', onPressed: onLock ?? () {}),
         ],
       ),
     );
