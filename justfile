@@ -11,9 +11,9 @@ check: rust design
 
 # Format, lint and test the Rust crates
 rust:
-    cargo fmt -p pos-core -p pos-sync --check
-    cargo clippy -p pos-core -p pos-sync --all-targets -- -D warnings
-    cargo test -p pos-core -p pos-sync
+    cargo fmt -p pos-core -p pos-sync -p pos-store --check
+    cargo clippy -p pos-core -p pos-sync -p pos-store --all-targets -- -D warnings
+    cargo test -p pos-core -p pos-sync -p pos-store
 
 # Check tokens, analyze and test the design system (goldens are macOS-rendered)
 design:
