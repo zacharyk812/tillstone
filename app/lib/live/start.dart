@@ -4,6 +4,8 @@ import 'package:tillstone_design_system/tillstone_design_system.dart';
 import '../screens/gallery.dart';
 import '../src/session.dart';
 import '../src/vault.dart';
+import 'recovery_kit.dart';
+import 'setup.dart';
 import 'sign_in.dart';
 
 /// First screen: opens this device's register, or offers to create one.
@@ -36,6 +38,19 @@ class _StartGateState extends State<StartGate> {
     }
   }
 
+  void _setup() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SetupWizard(
+          vault: _vault,
+          onCreated: (session) => setState(() {
+            _session = Future.value(session);
+          }),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Session?>(
@@ -48,18 +63,26 @@ class _StartGateState extends State<StartGate> {
           return _Message(title: 'Tillstone could not start', body: '${snap.error}');
         }
         final session = snap.data;
-        if (session != null) return SignInScreen(session: session);
-        return _Welcome(creating: _creating, onDemo: _createDemo);
+        if (session != null) {
+          // Setup isn't finished until the recovery code is saved.
+          return ListenableBuilder(
+            listenable: session,
+            builder: (context, _) =>
+                session.state.recoveryConfirmed ? SignInScreen(session: session) : RecoveryKitScreen(session: session),
+          );
+        }
+        return _Welcome(creating: _creating, onDemo: _createDemo, onSetup: _setup);
       },
     );
   }
 }
 
 class _Welcome extends StatelessWidget {
-  const _Welcome({required this.creating, required this.onDemo});
+  const _Welcome({required this.creating, required this.onDemo, required this.onSetup});
 
   final bool creating;
   final VoidCallback onDemo;
+  final VoidCallback onSetup;
 
   @override
   Widget build(BuildContext context) {
@@ -79,8 +102,8 @@ class _Welcome extends StatelessWidget {
                 const PosText('Welcome', style: PosType.display),
                 const SizedBox(height: PosSpacing.sm),
                 PosText(
-                  'Tillstone runs entirely on this device. Start with the demo business to try it, '
-                  'or set up your own (coming soon).',
+                  '${PosBrandInfo.name} runs entirely on this device: no account, no cloud. '
+                  'Try the demo business first, or set up your own in a few minutes.',
                   color: c.textMuted,
                 ),
                 const SizedBox(height: PosSpacing.xl),
@@ -90,10 +113,11 @@ class _Welcome extends StatelessWidget {
                   onPressed: creating ? null : onDemo,
                 ),
                 const SizedBox(height: PosSpacing.sm),
-                const PosButton(
-                  label: 'Set up my business (coming soon)',
+                PosButton(
+                  label: 'Set up my business',
                   kind: PosButtonKind.secondary,
-                  onPressed: null,
+                  large: true,
+                  onPressed: creating ? null : onSetup,
                 ),
                 const SizedBox(height: PosSpacing.sm),
                 PosButton(

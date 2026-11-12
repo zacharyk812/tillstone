@@ -83,9 +83,11 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                     ],
                     const Spacer(),
-                    PosText('Demo PINs', style: PosType.label, color: c.onPrimary),
-                    for (final (who, pin) in till.demoPins())
-                      PosText('$who: $pin', style: PosType.caption, color: c.onPrimary.withValues(alpha: 0.85)),
+                    if (widget.session.state.demo) ...[
+                      PosText('Demo PINs', style: PosType.label, color: c.onPrimary),
+                      for (final (who, pin) in till.demoPins())
+                        PosText('$who: $pin', style: PosType.caption, color: c.onPrimary.withValues(alpha: 0.85)),
+                    ],
                   ],
                 ),
               ),

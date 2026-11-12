@@ -7,18 +7,51 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// The keys this device needs (PLAN §9).
+///
+/// The owner authority key is not here: it's created in Rust at setup and
+/// only ever stored sealed with the owner passphrase (see [DeviceState]).
 class DeviceKeys {
-  const DeviceKeys({required this.database, required this.device, required this.owner});
+  const DeviceKeys({required this.database, required this.device});
 
   /// Encrypts the local database (SQLCipher).
   final Uint8List database;
 
   /// This device's identity: signs its records and its connections.
   final Uint8List device;
+}
 
-  /// The owner authority. TODO(M4): keep it encrypted with the owner
-  /// passphrase instead of next to the other keys.
-  final Uint8List owner;
+/// Non-secret facts about this device's setup, kept next to the database.
+class DeviceState {
+  const DeviceState({this.demo = false, this.recoveryConfirmed = false, this.sealedOwnerKey});
+
+  /// The business is the demo (show demo PINs on sign-in).
+  final bool demo;
+
+  /// The owner confirmed they saved the recovery code. Until then the app
+  /// asks again at start, so a crash during setup can't lose it.
+  final bool recoveryConfirmed;
+
+  /// The owner key, encrypted with the owner passphrase (Argon2id +
+  /// XChaCha20-Poly1305). Useless without the passphrase.
+  final Uint8List? sealedOwnerKey;
+
+  DeviceState copyWith({bool? demo, bool? recoveryConfirmed, Uint8List? sealedOwnerKey}) => DeviceState(
+    demo: demo ?? this.demo,
+    recoveryConfirmed: recoveryConfirmed ?? this.recoveryConfirmed,
+    sealedOwnerKey: sealedOwnerKey ?? this.sealedOwnerKey,
+  );
+
+  Map<String, Object?> toJson() => {
+    'demo': demo,
+    'recovery_confirmed': recoveryConfirmed,
+    if (sealedOwnerKey != null) 'sealed_owner_key': base64Encode(sealedOwnerKey!),
+  };
+
+  static DeviceState fromJson(Map<String, dynamic> j) => DeviceState(
+    demo: j['demo'] == true,
+    recoveryConfirmed: j['recovery_confirmed'] == true,
+    sealedOwnerKey: j['sealed_owner_key'] is String ? base64Decode(j['sealed_owner_key'] as String) : null,
+  );
 }
 
 /// Where the keys ended up.
@@ -47,7 +80,7 @@ class KeyVault {
   final FlutterSecureStorage _storage;
   final Directory? _directory;
 
-  static const _names = ['database', 'device', 'owner'];
+  static const _names = ['database', 'device'];
   static const _prefix = 'tillstone.key.';
 
   Future<Directory> appDirectory() async => _directory ?? await getApplicationSupportDirectory();
@@ -79,6 +112,24 @@ class KeyVault {
     }
   }
 
+  Future<File> _stateFile() async => File('${(await appDirectory()).path}/device.json');
+
+  /// Reads this device's setup state. A database from before this file
+  /// existed (an early demo install) counts as a confirmed demo.
+  Future<DeviceState> readState() async {
+    final file = await _stateFile();
+    if (!file.existsSync()) return const DeviceState(demo: true, recoveryConfirmed: true);
+    return DeviceState.fromJson(jsonDecode(file.readAsStringSync()) as Map<String, dynamic>);
+  }
+
+  /// Writes the state atomically (write a temporary file, then rename).
+  Future<void> writeState(DeviceState state) async {
+    final file = await _stateFile();
+    file.parent.createSync(recursive: true);
+    final tmp = File('${file.path}.tmp')..writeAsStringSync(jsonEncode(state.toJson()), flush: true);
+    tmp.renameSync(file.path);
+  }
+
   Future<String?> _readSystem(String name) => _storage.read(key: '$_prefix$name');
 
   Future<void> _writeSystem(String name, String value) => _storage.write(key: '$_prefix$name', value: value);
@@ -98,7 +149,7 @@ class KeyVault {
       }
       keys[name] = base64Decode(value);
     }
-    return DeviceKeys(database: keys['database']!, device: keys['device']!, owner: keys['owner']!);
+    return DeviceKeys(database: keys['database']!, device: keys['device']!);
   }
 
   static Uint8List _random32() {
