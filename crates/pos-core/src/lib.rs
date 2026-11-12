@@ -5,7 +5,11 @@
 
 #![forbid(unsafe_code)]
 
+pub mod catalog;
+pub mod hlc;
+pub mod ids;
 pub mod money;
+pub mod pricing;
 
 pub use money::{Currency, Money, MoneyError, Rounding};
 
