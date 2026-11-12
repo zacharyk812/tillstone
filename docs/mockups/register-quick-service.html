@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Register mockup</title>
+<style>
+  /* Tillstone tokens (tokens/tokens.json, light theme) */
+  .ts {
+    --bg: #FAFAF9; --surface: #FFFFFF; --muted: #F1F0EE; --text: #1C1B1A;
+    --text-muted: #5E5B57; --border: #DAD7D2; --primary: #1F5F4A; --on-primary: #FFFFFF;
+    --danger: #B3261E; --warning: #8A5A00; --success: #1E6B3A;
+    --r-sm: 6px; --r-md: 10px; --r-lg: 16px;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+  }
+  .fit { width: 100%; overflow: hidden; }
+  .device {
+    width: 1200px; height: 760px; zoom: calc(100% * 0.58);
+    background: var(--bg); border-radius: 22px; overflow: hidden;
+    display: grid; grid-template-rows: 60px 1fr; border: 10px solid #232220;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+  @container (min-width: 0) {}
+  /* Top bar */
+  .top { display: flex; align-items: center; gap: 16px; padding: 0 16px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  .brand { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; }
+  .mark { width: 28px; height: 28px; border-radius: 8px; background: var(--primary); position: relative; }
+  .mark::after { content: ""; position: absolute; inset: 8px 6px; border-radius: 3px; background: #7FC8AC; }
+  .seg { display: flex; background: var(--muted); border-radius: var(--r-md); padding: 3px; }
+  .seg span { padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 15px; color: var(--text-muted); }
+  .seg .on { background: var(--surface); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+  .spacer { flex: 1; }
+  .sync { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-muted); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--success); }
+  .staff { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 15px; padding: 6px 12px 6px 6px; border-radius: 999px; background: var(--muted); }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: #D9E8E1; color: var(--primary); display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+  .iconbtn { width: 44px; height: 44px; border-radius: var(--r-md); border: 1px solid var(--border); display: grid; place-items: center; color: var(--text-muted); font-size: 18px; }
+
+  /* Body */
+  .body { display: grid; grid-template-columns: 1fr 400px; min-height: 0; }
+  .menu { display: flex; flex-direction: column; padding: 16px; gap: 12px; min-height: 0; }
+  .search { display: flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-md); color: var(--text-muted); font-size: 15px; }
+  .search kbd { margin-left: auto; font: inherit; font-size: 12px; padding: 3px 8px; border: 1px solid var(--border); border-radius: 6px; }
+  .tabs { display: flex; gap: 8px; }
+  .tabs span { padding: 12px 18px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border); font-weight: 600; font-size: 15px; }
+  .tabs .on { background: var(--primary); border-color: var(--primary); color: var(--on-primary); }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .tile { height: 108px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--border); padding: 14px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .tile::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--c, #7FC8AC); }
+  .tile b { font-size: 16px; font-weight: 600; line-height: 1.25; }
+  .tile small { font-size: 15px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .tile.out { opacity: .5; }
+  .tile.out small::after { content: " · Sold out"; color: var(--danger); font-weight: 600; }
+  .tile .badge { position: absolute; right: 10px; top: 10px; font-size: 12px; font-weight: 700; color: var(--primary); background: #E3EFEA; padding: 3px 7px; border-radius: 6px; }
+
+  /* Order panel */
+  .order { background: var(--surface); border-left: 1px solid var(--border); display: grid; grid-template-rows: auto auto 1fr auto; min-height: 0; }
+  .ohead { padding: 16px 16px 10px; display: flex; align-items: baseline; gap: 10px; }
+  .ohead h2 { margin: 0; font-size: 22px; }
+  .ohead span { color: var(--text-muted); font-size: 14px; }
+  .dining { display: flex; gap: 8px; padding: 0 16px 12px; border-bottom: 1px solid var(--border); }
+  .dining span { flex: 1; text-align: center; padding: 10px; border-radius: var(--r-md); border: 1px solid var(--border); font-weight: 600; font-size: 15px; }
+  .dining .on { border-color: var(--primary); color: var(--primary); background: #EEF5F2; }
+  .lines { padding: 4px 16px; overflow: hidden; }
+  .line { display: grid; grid-template-columns: 36px 1fr auto; gap: 10px; padding: 12px 0; border-bottom: 1px solid var(--muted); }
+  .qty { width: 32px; height: 32px; border-radius: 8px; background: var(--muted); display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+  .line b { font-size: 16px; font-weight: 600; }
+  .line .mods { color: var(--text-muted); font-size: 14px; margin-top: 3px; line-height: 1.4; }
+  .line .amt { font-weight: 600; font-variant-numeric: tabular-nums; font-size: 16px; }
+  .line.sel { background: #EEF5F2; margin: 0 -16px; padding: 12px 16px; border-bottom-color: transparent; box-shadow: inset 4px 0 0 var(--primary); }
+  .line.disc .amt, .line.disc b { color: var(--success); }
+  .foot { padding: 12px 16px 16px; border-top: 1px solid var(--border); display: grid; gap: 10px; }
+  .row { display: flex; justify-content: space-between; font-size: 15px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .row.total { color: var(--text); font-size: 20px; font-weight: 700; }
+  .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .btn { height: 48px; border-radius: var(--r-md); display: grid; place-items: center; font-weight: 600; font-size: 16px; background: var(--muted); }
+  .cta { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+  .send { height: 64px; border-radius: var(--r-md); display: grid; place-items: center; font-weight: 700; font-size: 18px; border: 2px solid var(--primary); color: var(--primary); }
+  .pay { height: 64px; border-radius: var(--r-md); display: grid; place-items: center; font-weight: 700; font-size: 20px; background: var(--primary); color: var(--on-primary); }
+
+  .notes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px 20px; margin-top: 14px; font-size: 13px; color: var(--muted-foreground); }
+  .notes b { color: var(--foreground); }
+</style>
+</head>
+<body>
+<div class="fit">
+<div class="ts device">
+  <header class="top">
+    <div class="brand"><div class="mark"></div>Tillstone</div>
+    <div class="seg"><span class="on">Café</span><span>Books</span></div>
+    <div class="spacer"></div>
+    <div class="sync"><div class="dot"></div>3 devices · all synced</div>
+    <div class="staff"><div class="avatar">MR</div>Maya</div>
+    <div class="iconbtn">⏻</div>
+  </header>
+
+  <div class="body">
+    <section class="menu">
+      <div class="search">⌕ Search items or scan a barcode<kbd>/</kbd></div>
+      <div class="tabs">
+        <span class="on">Coffee</span><span>Tea</span><span>Bakery</span><span>Breakfast</span><span>Cold drinks</span><span>Beans</span>
+      </div>
+      <div class="grid">
+        <div class="tile" style="--c:#8B5E3C"><b>Espresso</b><small>$3.00</small></div>
+        <div class="tile" style="--c:#8B5E3C"><b>Americano</b><small>$3.50</small></div>
+        <div class="tile" style="--c:#8B5E3C"><span class="badge">1</span><b>Latte</b><small>$4.75</small></div>
+        <div class="tile" style="--c:#8B5E3C"><b>Cappuccino</b><small>$4.50</small></div>
+        <div class="tile" style="--c:#8B5E3C"><b>Flat white</b><small>$4.50</small></div>
+        <div class="tile" style="--c:#8B5E3C"><b>Mocha</b><small>$5.25</small></div>
+        <div class="tile" style="--c:#8B5E3C"><b>Cortado</b><small>$4.00</small></div>
+        <div class="tile out" style="--c:#8B5E3C"><b>Pumpkin spice latte</b><small>$5.75</small></div>
+        <div class="tile" style="--c:#3D7EA6"><span class="badge">1</span><b>Cold brew</b><small>$4.50</small></div>
+        <div class="tile" style="--c:#3D7EA6"><b>Iced latte</b><small>$5.00</small></div>
+        <div class="tile" style="--c:#C08A2E"><span class="badge">2</span><b>Butter croissant</b><small>$3.50</small></div>
+        <div class="tile" style="--c:#C08A2E"><b>Blueberry muffin</b><small>$3.75</small></div>
+      </div>
+    </section>
+
+    <aside class="order">
+      <div class="ohead"><h2>Order A42</h2><span>Café · opened 9:41</span></div>
+      <div class="dining"><span class="on">For here</span><span>To go</span><span>Pickup</span></div>
+      <div class="lines">
+        <div class="line sel"><div class="qty">1</div><div><b>Latte</b><div class="mods">Large · Oat milk +$0.75<br>Extra shot +$0.75</div></div><div class="amt">$6.25</div></div>
+        <div class="line"><div class="qty">2</div><div><b>Butter croissant</b><div class="mods">Warmed</div></div><div class="amt">$7.00</div></div>
+        <div class="line"><div class="qty">1</div><div><b>Cold brew</b></div><div class="amt">$4.50</div></div>
+        <div class="line disc"><div class="qty">%</div><div><b>Staff discount 10%</b></div><div class="amt">−$1.78</div></div>
+      </div>
+      <div class="foot">
+        <div class="row"><span>Subtotal</span><span>$17.75</span></div>
+        <div class="row"><span>Discounts</span><span>−$1.78</span></div>
+        <div class="row"><span>Sales tax 8.25%</span><span>$1.32</span></div>
+        <div class="row total"><span>Total</span><span>$17.29</span></div>
+        <div class="actions"><div class="btn">Discount</div><div class="btn">Note</div><div class="btn">Hold</div></div>
+        <div class="cta"><div class="send">Send</div><div class="pay">Pay $17.29</div></div>
+      </div>
+    </aside>
+  </div>
+</div>
+</div>
+<div class="notes">
+  <div><b>Top bar</b> — selling-area switcher for hybrids (Café / Books), sync status, who's signed in, lock.</div>
+  <div><b>Left</b> — search or scan first, category tabs, big item tiles with color by category; sold-out items dimmed.</div>
+  <div><b>Right</b> — the order: dining option, lines with modifiers, totals, and the main actions. Pay is always the biggest button.</div>
+</div>
+</body>
+</html>

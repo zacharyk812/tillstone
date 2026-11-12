@@ -1,34 +1,44 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tillstone_design_system/testing.dart';
 import 'package:tillstone_design_system/tillstone_design_system.dart';
 
 Widget _frame(ThemeData theme, Widget child) => MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: theme,
-      home: Scaffold(
-        body: Padding(padding: const EdgeInsets.all(PosSpacing.lg), child: child),
-      ),
-    );
+  debugShowCheckedModeBanner: false,
+  theme: theme,
+  home: Scaffold(
+    body: Padding(padding: const EdgeInsets.all(PosSpacing.lg), child: child),
+  ),
+);
 
 Widget _gallery() => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        PosButton(label: 'Pay', large: true, onPressed: () {}),
-        const SizedBox(height: PosSpacing.sm),
-        PosButton(label: 'Add note', kind: PosButtonKind.secondary, onPressed: () {}),
-        const SizedBox(height: PosSpacing.sm),
-        PosButton(label: 'Void', kind: PosButtonKind.danger, onPressed: () {}),
-        const SizedBox(height: PosSpacing.sm),
-        const PosButton(label: 'Disabled', onPressed: null),
-      ],
-    );
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    PosButton(label: 'Pay', large: true, onPressed: () {}),
+    const SizedBox(height: PosSpacing.sm),
+    PosButton(label: 'Add note', kind: PosButtonKind.secondary, onPressed: () {}),
+    const SizedBox(height: PosSpacing.sm),
+    PosButton(label: 'Void', kind: PosButtonKind.danger, onPressed: () {}),
+    const SizedBox(height: PosSpacing.sm),
+    const PosButton(label: 'Disabled', onPressed: null),
+  ],
+);
 
 void main() {
+  setUpAll(() => loadPosFonts('fonts'));
+
   testWidgets('meets minimum tap targets', (tester) async {
-    await tester.pumpWidget(_frame(PosTheme.light(), Column(children: [
-      PosButton(label: 'Small', onPressed: () {}),
-      PosButton(label: 'Pay', large: true, onPressed: () {}),
-    ])));
+    await tester.pumpWidget(
+      _frame(
+        PosTheme.light(),
+        Column(
+          children: [
+            PosButton(label: 'Small', onPressed: () {}),
+            PosButton(label: 'Pay', large: true, onPressed: () {}),
+          ],
+        ),
+      ),
+    );
     expect(tester.getSize(find.byType(PosButton).first).height, greaterThanOrEqualTo(48));
     expect(tester.getSize(find.byType(PosButton).last).height, greaterThanOrEqualTo(64));
   });

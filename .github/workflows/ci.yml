@@ -29,11 +29,11 @@ jobs:
       - run: rustup update stable && rustup default stable && rustup component add rustfmt clippy
       - name: Format
         if: matrix.os == 'ubuntu-latest'
-        run: cargo fmt -p pos-core -p pos-sync --check
+        run: cargo fmt -p pos-core -p pos-sync -p pos-store --check
       - name: Lint
-        run: cargo clippy -p pos-core -p pos-sync --all-targets -- -D warnings
+        run: cargo clippy -p pos-core -p pos-sync -p pos-store --all-targets -- -D warnings
       - name: Test
-        run: cargo test -p pos-core -p pos-sync
+        run: cargo test -p pos-core -p pos-sync -p pos-store
 
   design-system:
     name: Design system
@@ -54,6 +54,20 @@ jobs:
         run: dart run tool/generate_tokens.dart --check
       - run: flutter analyze
       - run: flutter test
+      - name: Screen designs (goldens)
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter test test/
+      - name: Upload golden failures
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: golden-failures
+          path: |
+            packages/design_system/test/failures/
+            app/test/failures/
+          if-no-files-found: ignore
 
   app:
     name: App proof (${{ matrix.platform }})

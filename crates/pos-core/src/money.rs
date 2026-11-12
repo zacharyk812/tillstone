@@ -2,8 +2,10 @@
 
 use std::fmt;
 
+use serde::{Deserialize, Serialize};
+
 /// An ISO-4217 currency code and how many minor units it has.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Currency {
     code: [u8; 3],
     exponent: u8,
@@ -31,7 +33,7 @@ impl Currency {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum MoneyError {
     CurrencyMismatch,
     Overflow,
@@ -55,7 +57,7 @@ impl fmt::Display for MoneyError {
 impl std::error::Error for MoneyError {}
 
 /// How to round a fractional minor unit. Each tax rule names its own (§7).
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Rounding {
     /// 0.5 rounds away from zero.
     HalfUp,
@@ -66,7 +68,7 @@ pub enum Rounding {
 }
 
 /// An amount in minor units of one currency.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub struct Money {
     minor: i64,
     currency: Currency,

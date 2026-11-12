@@ -15,7 +15,7 @@ void main() {
   setUpAll(() async => await RustLib.init());
 
   testWidgets('Rust core and peer-to-peer work on this platform', (tester) async {
-    await tester.pumpWidget(const TillstoneApp());
+    await tester.pumpWidget(const TillstoneApp(home: ProofScreen()));
     expect(find.textContaining('3.34 USD + 3.33 USD + 3.33 USD'), findsOneWidget);
 
     await tester.tap(find.text('Run peer-to-peer self-test'));
@@ -23,7 +23,12 @@ void main() {
     for (var i = 0; i < 100 && result.evaluate().isEmpty; i++) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(result, findsOneWidget, reason: 'self-test output: '
-        '${tester.widget<Text>(find.byKey(const Key('peer-result'))).data}');
+    expect(
+      result,
+      findsOneWidget,
+      reason:
+          'self-test output: '
+          '${tester.widget<Text>(find.byKey(const Key('peer-result'))).data}',
+    );
   });
 }

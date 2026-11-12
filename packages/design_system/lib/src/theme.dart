@@ -5,19 +5,27 @@ import 'tokens.g.dart';
 /// Builds the app theme from tokens, with every platform-dependent behavior
 /// pinned so Android, Windows, Linux and macOS look and act the same.
 abstract final class PosTheme {
+  /// The bundled font (Inter), so text renders the same everywhere.
+  static const fontFamily = 'Inter';
+  static const fontPackage = 'tillstone_design_system';
+
   static ThemeData light() => _build(PosColors.light, Brightness.light);
   static ThemeData dark() => _build(PosColors.dark, Brightness.dark);
 
   static ThemeData _build(PosColors c, Brightness brightness) {
     TextStyle style(PosTypeStyle t, Color color) => TextStyle(
-          fontSize: t.size,
-          fontWeight: t.weight,
-          height: t.height,
-          color: color,
-        );
+      fontFamily: fontFamily,
+      package: fontPackage,
+      fontSize: t.size,
+      fontWeight: t.weight,
+      height: t.height,
+      color: color,
+    );
 
     return ThemeData(
       brightness: brightness,
+      fontFamily: fontFamily,
+      package: fontPackage,
       // One platform for everyone: no per-OS scroll physics, fonts or menus.
       platform: TargetPlatform.android,
       useMaterial3: true,
@@ -58,8 +66,7 @@ class PosThemeColors extends ThemeExtension<PosThemeColors> {
   const PosThemeColors(this.colors);
   final PosColors colors;
 
-  static PosColors of(BuildContext context) =>
-      Theme.of(context).extension<PosThemeColors>()!.colors;
+  static PosColors of(BuildContext context) => Theme.of(context).extension<PosThemeColors>()!.colors;
 
   @override
   PosThemeColors copyWith({PosColors? colors}) => PosThemeColors(colors ?? this.colors);
