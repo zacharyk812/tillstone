@@ -216,3 +216,16 @@ fn a_device_can_only_create_one_business() {
         Register::create_with_clock(&path, &DB_KEY, &DEVICE, &OWNER, demo::setup(), clock).is_err()
     );
 }
+
+#[test]
+fn signing_in_by_name_checks_only_that_person() {
+    let path = temp_db("by-name");
+    let (mut reg, _) = demo_register(&path);
+    reg.sign_out();
+    let staff = reg.staff_list();
+    assert_eq!(staff.iter().map(|(_, n)| n.as_str()).collect::<Vec<_>>(), ["Alex", "Maya"]);
+    let maya = staff.iter().find(|(_, n)| n == "Maya").unwrap().0;
+    // Alex's PIN doesn't sign in as Maya.
+    assert!(matches!(reg.sign_in_as(maya, demo::DEMO_OWNER_PIN), Err(AppError::WrongPin { .. })));
+    assert_eq!(reg.sign_in_as(maya, demo::DEMO_CASHIER_PIN).unwrap().name, "Maya");
+}

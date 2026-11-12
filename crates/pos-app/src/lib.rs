@@ -381,6 +381,24 @@ impl Register {
 
     /// Signs in by PIN alone (PINs are unique per business). Works offline.
     pub fn sign_in(&mut self, pin: &str) -> Result<SignedIn> {
+        self.sign_in_inner(None, pin)
+    }
+
+    /// Signs in a chosen staff member: checks one PIN hash instead of all of
+    /// them, so it stays fast with large teams.
+    pub fn sign_in_as(&mut self, staff: StaffId, pin: &str) -> Result<SignedIn> {
+        self.sign_in_inner(Some(staff), pin)
+    }
+
+    /// Active staff, by name, for a "tap your name" sign-in screen.
+    pub fn staff_list(&self) -> Vec<(StaffId, String)> {
+        let mut v: Vec<(StaffId, String)> =
+            self.book.config().staff.values().filter(|s| s.active).map(|s| (s.id, s.name.clone())).collect();
+        v.sort_by(|a, b| a.1.cmp(&b.1));
+        v
+    }
+
+    fn sign_in_inner(&mut self, who: Option<StaffId>, pin: &str) -> Result<SignedIn> {
         let now = (self.clock)();
         if now < self.locked_until_ms {
             return Err(AppError::LockedOut { retry_in_ms: self.locked_until_ms - now });
@@ -390,6 +408,7 @@ impl Register {
             .config()
             .staff
             .values()
+            .filter(|s| who.is_none_or(|w| w == s.id))
             .find(|s| s.active && pin_matches(pin, &s.pin_hash))
             .map(|s| s.id);
         match found {
