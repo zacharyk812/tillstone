@@ -6,9 +6,12 @@
 #![forbid(unsafe_code)]
 
 pub mod catalog;
+pub mod events;
 pub mod hlc;
 pub mod ids;
+pub mod ledger;
 pub mod money;
+pub mod permissions;
 pub mod pricing;
 
 pub use money::{Currency, Money, MoneyError, Rounding};
