@@ -17,9 +17,9 @@ flutter test integration_test -d macos     # or: -d windows, -d linux, or an And
 | Platform | Result |
 |---|---|
 | macOS | ✅ passes locally |
-| Linux | CI (`app` job) |
-| Windows | CI (`app` job) |
-| Android | CI builds the APK; run on a device as below |
+| Linux | ✅ passes in CI |
+| Windows | ✅ passes in CI |
+| Android | ✅ APK builds in CI; run the test on a device as below |
 
 ## 2. Two devices find each other and exchange signed messages
 

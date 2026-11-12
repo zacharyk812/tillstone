@@ -87,10 +87,12 @@ jobs:
         run: flutter analyze
       - name: Run the M0 proof on ${{ matrix.platform }}
         run: |
+          # The default GitHub reporter miscounts integration tests on Linux
+          # (reports "0 tests" after a pass), so use the expanded reporter.
           if [ "${{ matrix.platform }}" = linux ]; then
-            xvfb-run -a flutter test integration_test -d linux
+            xvfb-run -a flutter test integration_test -d linux --reporter expanded
           else
-            flutter test integration_test -d ${{ matrix.platform }}
+            flutter test integration_test -d ${{ matrix.platform }} --reporter expanded
           fi
 
   android:
