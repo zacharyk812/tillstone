@@ -28,6 +28,8 @@ class RegisterScaffold extends StatelessWidget {
     this.initials = 'MR',
     this.sync = PosSyncState.synced,
     this.syncLabel = '3 devices · all synced',
+    this.onArea,
+    this.onLock,
   });
 
   final List<String> areas;
@@ -39,6 +41,8 @@ class RegisterScaffold extends StatelessWidget {
   final String initials;
   final PosSyncState sync;
   final String syncLabel;
+  final ValueChanged<int>? onArea;
+  final VoidCallback? onLock;
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +52,14 @@ class RegisterScaffold extends StatelessWidget {
         child: Column(
           children: [
             PosTopBar(
-              leading: areas.length > 1 ? PosSegmented(options: areas, selected: area, onSelected: (_) {}) : null,
+              leading: areas.length > 1
+                  ? PosSegmented(options: areas, selected: area, onSelected: onArea ?? (_) {})
+                  : null,
               syncState: sync,
               syncLabel: syncLabel,
               staffName: staff,
               staffInitials: initials,
+              onLock: onLock,
             ),
             Expanded(
               child: Row(
@@ -113,6 +120,11 @@ class OrderPanel extends StatelessWidget {
     required this.actions,
     required this.primary,
     this.secondary,
+    this.onAction,
+    this.onPrimary,
+    this.onSecondary,
+    this.onLine,
+    this.empty,
   });
 
   final String title;
@@ -123,6 +135,13 @@ class OrderPanel extends StatelessWidget {
   final List<String> actions;
   final String primary;
   final String? secondary;
+  final ValueChanged<String>? onAction;
+  final VoidCallback? onPrimary;
+  final VoidCallback? onSecondary;
+  final ValueChanged<int>? onLine;
+
+  /// Shown instead of the lines when there are none.
+  final Widget? empty;
 
   @override
   Widget build(BuildContext context) {
@@ -143,20 +162,25 @@ class OrderPanel extends StatelessWidget {
             child: header,
           ),
         Expanded(
-          child: ListView(
-            children: [
-              for (final l in lines)
-                PosOrderLine(
-                  quantity: l.qty,
-                  name: l.name,
-                  amount: l.amount,
-                  details: l.details,
-                  tone: l.tone,
-                  selected: l.selected,
-                  trailing: l.status == null ? null : PosBadge(label: l.status!, tone: PosTone.neutral),
+          child: lines.isEmpty && empty != null
+              ? Center(child: empty)
+              : ListView(
+                  children: [
+                    for (final (i, l) in lines.indexed)
+                      InkWell(
+                        onTap: onLine == null ? null : () => onLine!(i),
+                        child: PosOrderLine(
+                          quantity: l.qty,
+                          name: l.name,
+                          amount: l.amount,
+                          details: l.details,
+                          tone: l.tone,
+                          selected: l.selected,
+                          trailing: l.status == null ? null : PosBadge(label: l.status!, tone: PosTone.neutral),
+                        ),
+                      ),
+                  ],
                 ),
-            ],
-          ),
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(PosSpacing.lg, PosSpacing.md, PosSpacing.lg, PosSpacing.lg),
@@ -174,7 +198,11 @@ class OrderPanel extends StatelessWidget {
                   for (final (i, a) in actions.indexed) ...[
                     if (i > 0) const SizedBox(width: PosSpacing.sm),
                     Expanded(
-                      child: PosButton(label: a, kind: PosButtonKind.secondary, onPressed: () {}),
+                      child: PosButton(
+                        label: a,
+                        kind: PosButtonKind.secondary,
+                        onPressed: onAction == null ? () {} : () => onAction!(a),
+                      ),
                     ),
                   ],
                 ],
@@ -183,12 +211,14 @@ class OrderPanel extends StatelessWidget {
               Row(
                 children: [
                   if (secondary != null) ...[
-                    Expanded(child: _OutlineButton(label: secondary!)),
+                    Expanded(
+                      child: _OutlineButton(label: secondary!, onTap: onSecondary),
+                    ),
                     const SizedBox(width: PosSpacing.sm),
                   ],
                   Expanded(
                     flex: 2,
-                    child: PosButton(label: primary, large: true, onPressed: () {}),
+                    child: PosButton(label: primary, large: true, onPressed: onPrimary ?? () {}),
                   ),
                 ],
               ),
@@ -201,9 +231,10 @@ class OrderPanel extends StatelessWidget {
 }
 
 class _OutlineButton extends StatelessWidget {
-  const _OutlineButton({required this.label});
+  const _OutlineButton({required this.label, this.onTap});
 
   final String label;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -215,7 +246,7 @@ class _OutlineButton extends StatelessWidget {
         side: BorderSide(color: c.primary, width: 2),
       ),
       child: InkWell(
-        onTap: () {},
+        onTap: onTap ?? () {},
         borderRadius: BorderRadius.circular(PosRadius.md),
         child: SizedBox(
           height: PosSize.primaryTapTarget,

@@ -4,5 +4,6 @@ library;
 
 export 'src/button.dart';
 export 'src/components.dart';
+export 'src/text_field.dart';
 export 'src/theme.dart';
 export 'src/tokens.g.dart';

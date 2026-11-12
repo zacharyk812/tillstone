@@ -159,6 +159,21 @@ impl Store {
         Ok(rows.collect::<Result<_, _>>()?)
     }
 
+    /// The latest record written by `device` (this device's own log head),
+    /// used to continue its log after a restart.
+    pub fn last_record_of(&self, device: DeviceId) -> Result<Option<Record>> {
+        let wire: Option<Vec<u8>> = self
+            .conn
+            .query_row(
+                "SELECT wire FROM records WHERE device = ?1 ORDER BY seq DESC LIMIT 1",
+                [device.0.as_slice()],
+                |r| r.get(0),
+            )
+            .optional()?;
+        wire.map(|w| ledger::decode_trusted(&w).map_err(|e| StoreError::Corrupt(e.to_string())))
+            .transpose()
+    }
+
     pub fn record_count(&self) -> Result<u64> {
         Ok(self.conn.query_row("SELECT count(*) FROM records", [], |r| r.get::<_, i64>(0))? as u64)
     }

@@ -1,0 +1,15 @@
+{
+  "name": "Bar",
+  "description": "Drinks fast, with open tabs.",
+  "sort": 40,
+  "areas": [{ "name": "Bar", "mode": "bar" }],
+  "option_groups": [
+    { "name": "Serve", "max": 1, "options": [["Neat", "0"], ["On the rocks", "0"], ["Double", "4.00"]] }
+  ],
+  "items": [
+    { "name": "Draft beer", "area": "Bar", "price": "7.00", "sizes": [["Half", "4.50"], ["Pint", "7.00"]], "age_restricted": true },
+    { "name": "House wine", "area": "Bar", "price": "9.00", "age_restricted": true },
+    { "name": "Whisky", "area": "Bar", "price": "10.00", "options": ["Serve"], "age_restricted": true },
+    { "name": "Soda", "area": "Bar", "price": "3.00" }
+  ]
+}

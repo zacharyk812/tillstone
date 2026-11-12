@@ -1,0 +1,11 @@
+{
+  "name": "Shop",
+  "description": "Retail: products with stock and barcode scanning.",
+  "sort": 20,
+  "areas": [{ "name": "Shop", "mode": "retail" }],
+  "items": [
+    { "name": "T-shirt", "area": "Shop", "kind": "product", "price": "20.00", "sizes": [["S", "20.00"], ["M", "20.00"], ["L", "20.00"], ["XL", "22.00"]], "stock": 10 },
+    { "name": "Tote bag", "area": "Shop", "kind": "product", "price": "14.00", "stock": 10 },
+    { "name": "Gift wrap", "area": "Shop", "kind": "service", "price": "3.00" }
+  ]
+}

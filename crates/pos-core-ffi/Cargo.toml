@@ -12,9 +12,13 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 flutter_rust_bridge = "=2.13.0"
+pos-app = { version = "0.0.1", path = "../pos-app" }
 pos-core = { path = "../pos-core" }
+pos-store = { version = "0.0.1", path = "../pos-store" }
 pos-sync = { path = "../pos-sync" }
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "sync"] }
+uuid = "1.29.0"
+zeroize = "1.9.1"
 
 # Generated FFI glue needs `unsafe`, so this crate doesn't inherit the
 # workspace's `unsafe_code = "forbid"`. Business logic never lives here.

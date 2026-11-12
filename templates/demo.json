@@ -1,0 +1,39 @@
+{
+  "name": "Demo: Corner Café & Books",
+  "description": "A café with a bookshop, sample items and a cashier. For trying things out.",
+  "sort": 0,
+  "demo": {
+    "business_name": "Corner Café & Books",
+    "currency": "USD",
+    "owner_name": "Alex",
+    "owner_pin": "1234",
+    "tax": { "name": "Sales tax", "percent": "8.25", "included": false },
+    "order_prefix": "A"
+  },
+  "areas": [
+    { "name": "Café", "mode": "quick_service" },
+    { "name": "Books", "mode": "retail" }
+  ],
+  "option_groups": [
+    { "name": "Milk", "max": 1, "options": [["Oat milk", "0.75"], ["Almond milk", "0.75"], ["Whole milk", "0"]] },
+    { "name": "Extras", "max": 3, "options": [["Extra shot", "0.75"], ["Vanilla", "0.50"], ["Decaf", "0"]] }
+  ],
+  "items": [
+    { "name": "Espresso", "area": "Café", "price": "3.00", "options": ["Extras"] },
+    { "name": "Americano", "area": "Café", "price": "3.50", "options": ["Extras"] },
+    { "name": "Latte", "area": "Café", "price": "4.75", "sizes": [["Small", "4.25"], ["Large", "5.25"]], "options": ["Milk", "Extras"] },
+    { "name": "Cappuccino", "area": "Café", "price": "4.50", "options": ["Milk", "Extras"] },
+    { "name": "Flat white", "area": "Café", "price": "4.50", "options": ["Milk", "Extras"] },
+    { "name": "Mocha", "area": "Café", "price": "5.25", "options": ["Milk", "Extras"] },
+    { "name": "Cold brew", "area": "Café", "price": "4.50", "options": ["Milk"] },
+    { "name": "Butter croissant", "area": "Café", "price": "3.50" },
+    { "name": "Blueberry muffin", "area": "Café", "price": "3.75" },
+    { "name": "The Overstory", "area": "Books", "kind": "product", "price": "18.99", "stock": 12 },
+    { "name": "Braiding Sweetgrass", "area": "Books", "kind": "product", "price": "20.00", "stock": 4 },
+    { "name": "Piranesi", "area": "Books", "kind": "product", "price": "17.00", "stock": 9 },
+    { "name": "Klara and the Sun", "area": "Books", "kind": "product", "price": "16.95", "stock": 1 },
+    { "name": "Tote bag", "area": "Books", "kind": "product", "price": "14.00", "stock": 31 },
+    { "name": "Enamel mug", "area": "Books", "kind": "product", "price": "12.00", "stock": 18 }
+  ],
+  "staff": [{ "name": "Maya", "role": "cashier", "pin": "1111" }]
+}

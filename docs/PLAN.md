@@ -1,6 +1,6 @@
 # Tillstone — Master Plan
 
-> Status: v5 · 2026-11-11
+> Status: v6 · 2026-11-12
 > Goals: **secure, fast, robust, simple, cross-platform, identical UI everywhere.**
 > Project shape: **free and open source, self-hosted, peer-to-peer.** No company, no hosted service, no accounts with us.
 
@@ -21,6 +21,7 @@
 | Telemetry | **None.** Crash reporting is opt-in, to a destination the business chooses. | Privacy and trust |
 | Countries | **Every country.** A tamper-evident journal everywhere, plus per-country **fiscal adapters** for places that legally require certified, tamper-proof registers (§15). | One product worldwide, without pretending software alone can be tamper-proof |
 | License | **Apache-2.0** | Permissive, includes a patent grant, easy for businesses, contributors and certified distributions (§15) |
+| Forks | **Built to be forked** (ADR 0005). Brand, look, business templates and country data are files; hardware, payments and fiscal modules are traits; event kinds `0x8000–0xFFFF` are reserved for forks. | A business can tailor Tillstone and still merge upstream fixes (`docs/customizing.md`) |
 
 ---
 
@@ -581,7 +582,8 @@ pos/
 │  └─ posd/                # Headless always-on peer (+ optional private relay)
 ├─ packages/
 │  └─ design_system/       # Flutter components + generated tokens
-├─ tokens/                 # tokens.json + generator
+├─ tokens/                 # tokens.json (brand name, colors, type) + generator
+├─ templates/              # Business templates for the setup wizard, and the demo (JSON)
 ├─ countries/             # Country presets: tax, receipt rules, fiscal adapter, retention, exports
 ├─ docs/                   # mdBook: user guide, network setup, dev guide, ADRs, threat model, country status pages
 ├─ .github/                # CI, issue/PR templates
@@ -610,6 +612,7 @@ Funding for fees and an audit: GitHub Sponsors, Open Collective, or open-source 
 - CONTRIBUTING.md with one-command setup (`just setup`).
 - Good first issues: translations, tax presets, printer profiles, design-system components.
 - Stable, documented extension points: payment providers, printer drivers, fiscal modules, tax presets, report exports.
+- **Forking is a supported way to use Tillstone** (ADR 0005, `docs/customizing.md`): rebrand in `tokens.json`, add business templates in `templates/`, add events in the reserved fork range, and keep merging upstream.
 - Governance: you decide at first (GOVERNANCE.md); revisit if a core team forms.
 - Semantic versioning; changelog from conventional commits.
 

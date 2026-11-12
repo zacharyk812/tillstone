@@ -7,6 +7,9 @@
 //! - New kinds get new numbers. Peers that don't know a kind still store and
 //!   forward it ([`Event::Unknown`]), because the payload stays opaque bytes.
 //! - `tests::wire_format_is_stable` locks the encoding of every kind.
+//! - Kinds in [`FORK_KINDS`] belong to forks and are never used upstream, so a
+//!   business that adds its own events can keep merging upstream changes
+//!   without a clash (see docs/customizing.md).
 
 use serde::{Deserialize, Serialize, de::DeserializeOwned};
 
@@ -509,6 +512,10 @@ events! {
     60 => Correction,
 }
 
+/// Event kinds reserved for forks. Upstream Tillstone never uses these
+/// numbers; devices that don't know a fork's kinds keep and forward them.
+pub const FORK_KINDS: std::ops::RangeInclusive<u16> = 0x8000..=0xFFFF;
+
 fn encode<T: Serialize>(v: &T) -> Vec<u8> {
     postcard::to_allocvec(v).expect("in-memory encoding can't fail")
 }
@@ -610,6 +617,17 @@ mod tests {
             let bytes = e.encode_payload().unwrap();
             assert_eq!(Event::decode(e.kind(), e.schema(), &bytes).unwrap(), e, "{}", e.name());
         }
+    }
+
+    #[test]
+    fn upstream_never_uses_fork_kinds() {
+        for e in samples() {
+            assert!(!FORK_KINDS.contains(&e.kind()), "{} uses a fork kind", e.name());
+        }
+        assert_eq!(
+            Event::decode(0x8001, 1, b"fork data").unwrap(),
+            Event::Unknown { kind: 0x8001, schema: 1 }
+        );
     }
 
     #[test]

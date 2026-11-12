@@ -29,11 +29,11 @@ jobs:
       - run: rustup update stable && rustup default stable && rustup component add rustfmt clippy
       - name: Format
         if: matrix.os == 'ubuntu-latest'
-        run: cargo fmt -p pos-core -p pos-sync -p pos-store --check
+        run: cargo fmt -p pos-core -p pos-sync -p pos-store -p pos-app --check
       - name: Lint
-        run: cargo clippy -p pos-core -p pos-sync -p pos-store --all-targets -- -D warnings
+        run: cargo clippy -p pos-core -p pos-sync -p pos-store -p pos-app --all-targets -- -D warnings
       - name: Test
-        run: cargo test -p pos-core -p pos-sync -p pos-store
+        run: cargo test -p pos-core -p pos-sync -p pos-store -p pos-app
 
   design-system:
     name: Design system
@@ -94,7 +94,7 @@ jobs:
         if: matrix.platform == 'linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev xvfb
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libsecret-1-dev xvfb
       - run: flutter pub get
       - name: Analyze
         if: matrix.platform == 'linux'

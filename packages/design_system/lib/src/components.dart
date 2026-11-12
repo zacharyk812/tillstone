@@ -138,6 +138,7 @@ class PosTopBar extends StatelessWidget {
     required this.syncLabel,
     required this.staffName,
     required this.staffInitials,
+    this.onLock,
   });
 
   final Widget? leading;
@@ -146,6 +147,7 @@ class PosTopBar extends StatelessWidget {
   final String syncLabel;
   final String staffName;
   final String staffInitials;
+  final VoidCallback? onLock;
 
   @override
   Widget build(BuildContext context) {
@@ -185,14 +187,14 @@ class PosTopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: PosSpacing.sm),
-          PosIconButton(icon: Icons.lock_outline, label: 'Lock', onPressed: () {}),
+          PosIconButton(icon: Icons.lock_outline, label: 'Lock', onPressed: onLock ?? () {}),
         ],
       ),
     );
   }
 }
 
-/// Tillstone's mark and name.
+/// The product's mark and name (from tokens.json, so forks can rebrand).
 class PosBrand extends StatelessWidget {
   const PosBrand({super.key});
 
@@ -216,7 +218,10 @@ class PosBrand extends StatelessWidget {
           ),
         ),
         const SizedBox(width: PosSpacing.sm),
-        Text('Tillstone', style: _text(context, PosType.title).copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
+        Text(
+          PosBrandInfo.name,
+          style: _text(context, PosType.title).copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
       ],
     );
   }

@@ -7,6 +7,7 @@
 // ignore_for_file: argument_type_not_assignable
 
 import 'api/core.dart';
+import 'api/register.dart';
 
 import 'dart:async';
 import 'dart:convert';
@@ -23,6 +24,27 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     required super.portManager,
   });
 
+  CrossPlatformFinalizerArg get rust_arc_decrement_strong_count_TillPtr => wire
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill;
+
+  @protected
+  Till
+  dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    dynamic raw,
+  );
+
+  @protected
+  Till
+  dco_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    dynamic raw,
+  );
+
+  @protected
+  Till
+  dco_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    dynamic raw,
+  );
+
   @protected
   String dco_decode_String(dynamic raw);
 
@@ -30,16 +52,124 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  PlatformInt64 dco_decode_box_autoadd_i_64(dynamic raw);
+
+  @protected
+  OrderView dco_decode_box_autoadd_order_view(dynamic raw);
+
+  @protected
+  OwnerKit dco_decode_box_autoadd_owner_kit(dynamic raw);
+
+  @protected
+  SetupInput dco_decode_box_autoadd_setup_input(dynamic raw);
+
+  @protected
+  StaffView dco_decode_box_autoadd_staff_view(dynamic raw);
+
+  @protected
+  CashView dco_decode_cash_view(dynamic raw);
+
+  @protected
+  CenterView dco_decode_center_view(dynamic raw);
+
+  @protected
+  CurrencyView dco_decode_currency_view(dynamic raw);
+
+  @protected
+  int dco_decode_i_32(dynamic raw);
+
+  @protected
   PlatformInt64 dco_decode_i_64(dynamic raw);
+
+  @protected
+  ItemView dco_decode_item_view(dynamic raw);
+
+  @protected
+  LineView dco_decode_line_view(dynamic raw);
 
   @protected
   List<String> dco_decode_list_String(dynamic raw);
 
   @protected
+  List<CenterView> dco_decode_list_center_view(dynamic raw);
+
+  @protected
+  List<CurrencyView> dco_decode_list_currency_view(dynamic raw);
+
+  @protected
+  List<ItemView> dco_decode_list_item_view(dynamic raw);
+
+  @protected
+  List<LineView> dco_decode_list_line_view(dynamic raw);
+
+  @protected
+  List<OptionGroupView> dco_decode_list_option_group_view(dynamic raw);
+
+  @protected
+  List<OptionView> dco_decode_list_option_view(dynamic raw);
+
+  @protected
+  List<int> dco_decode_list_prim_u_8_loose(dynamic raw);
+
+  @protected
   Uint8List dco_decode_list_prim_u_8_strict(dynamic raw);
 
   @protected
+  List<(String, String)> dco_decode_list_record_string_string(dynamic raw);
+
+  @protected
+  List<StaffView> dco_decode_list_staff_view(dynamic raw);
+
+  @protected
+  List<TemplateView> dco_decode_list_template_view(dynamic raw);
+
+  @protected
+  String? dco_decode_opt_String(dynamic raw);
+
+  @protected
+  PlatformInt64? dco_decode_opt_box_autoadd_i_64(dynamic raw);
+
+  @protected
+  OrderView? dco_decode_opt_box_autoadd_order_view(dynamic raw);
+
+  @protected
+  OwnerKit? dco_decode_opt_box_autoadd_owner_kit(dynamic raw);
+
+  @protected
+  StaffView? dco_decode_opt_box_autoadd_staff_view(dynamic raw);
+
+  @protected
+  OptionGroupView dco_decode_option_group_view(dynamic raw);
+
+  @protected
+  OptionView dco_decode_option_view(dynamic raw);
+
+  @protected
+  OrderView dco_decode_order_view(dynamic raw);
+
+  @protected
+  OwnerKit dco_decode_owner_kit(dynamic raw);
+
+  @protected
   PeerSelfTest dco_decode_peer_self_test(dynamic raw);
+
+  @protected
+  (String, String) dco_decode_record_string_string(dynamic raw);
+
+  @protected
+  ReportView dco_decode_report_view(dynamic raw);
+
+  @protected
+  SetupInput dco_decode_setup_input(dynamic raw);
+
+  @protected
+  ShiftView dco_decode_shift_view(dynamic raw);
+
+  @protected
+  StaffView dco_decode_staff_view(dynamic raw);
+
+  @protected
+  TemplateView dco_decode_template_view(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -54,22 +184,165 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void dco_decode_unit(dynamic raw);
 
   @protected
+  BigInt dco_decode_usize(dynamic raw);
+
+  @protected
+  Till
+  sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  Till
+  sse_decode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  Till
+  sse_decode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  PlatformInt64 sse_decode_box_autoadd_i_64(SseDeserializer deserializer);
+
+  @protected
+  OrderView sse_decode_box_autoadd_order_view(SseDeserializer deserializer);
+
+  @protected
+  OwnerKit sse_decode_box_autoadd_owner_kit(SseDeserializer deserializer);
+
+  @protected
+  SetupInput sse_decode_box_autoadd_setup_input(SseDeserializer deserializer);
+
+  @protected
+  StaffView sse_decode_box_autoadd_staff_view(SseDeserializer deserializer);
+
+  @protected
+  CashView sse_decode_cash_view(SseDeserializer deserializer);
+
+  @protected
+  CenterView sse_decode_center_view(SseDeserializer deserializer);
+
+  @protected
+  CurrencyView sse_decode_currency_view(SseDeserializer deserializer);
+
+  @protected
+  int sse_decode_i_32(SseDeserializer deserializer);
+
+  @protected
   PlatformInt64 sse_decode_i_64(SseDeserializer deserializer);
+
+  @protected
+  ItemView sse_decode_item_view(SseDeserializer deserializer);
+
+  @protected
+  LineView sse_decode_line_view(SseDeserializer deserializer);
 
   @protected
   List<String> sse_decode_list_String(SseDeserializer deserializer);
 
   @protected
+  List<CenterView> sse_decode_list_center_view(SseDeserializer deserializer);
+
+  @protected
+  List<CurrencyView> sse_decode_list_currency_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<ItemView> sse_decode_list_item_view(SseDeserializer deserializer);
+
+  @protected
+  List<LineView> sse_decode_list_line_view(SseDeserializer deserializer);
+
+  @protected
+  List<OptionGroupView> sse_decode_list_option_group_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<OptionView> sse_decode_list_option_view(SseDeserializer deserializer);
+
+  @protected
+  List<int> sse_decode_list_prim_u_8_loose(SseDeserializer deserializer);
+
+  @protected
   Uint8List sse_decode_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
+  List<(String, String)> sse_decode_list_record_string_string(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  List<StaffView> sse_decode_list_staff_view(SseDeserializer deserializer);
+
+  @protected
+  List<TemplateView> sse_decode_list_template_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  String? sse_decode_opt_String(SseDeserializer deserializer);
+
+  @protected
+  PlatformInt64? sse_decode_opt_box_autoadd_i_64(SseDeserializer deserializer);
+
+  @protected
+  OrderView? sse_decode_opt_box_autoadd_order_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  OwnerKit? sse_decode_opt_box_autoadd_owner_kit(SseDeserializer deserializer);
+
+  @protected
+  StaffView? sse_decode_opt_box_autoadd_staff_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  OptionGroupView sse_decode_option_group_view(SseDeserializer deserializer);
+
+  @protected
+  OptionView sse_decode_option_view(SseDeserializer deserializer);
+
+  @protected
+  OrderView sse_decode_order_view(SseDeserializer deserializer);
+
+  @protected
+  OwnerKit sse_decode_owner_kit(SseDeserializer deserializer);
+
+  @protected
   PeerSelfTest sse_decode_peer_self_test(SseDeserializer deserializer);
+
+  @protected
+  (String, String) sse_decode_record_string_string(
+    SseDeserializer deserializer,
+  );
+
+  @protected
+  ReportView sse_decode_report_view(SseDeserializer deserializer);
+
+  @protected
+  SetupInput sse_decode_setup_input(SseDeserializer deserializer);
+
+  @protected
+  ShiftView sse_decode_shift_view(SseDeserializer deserializer);
+
+  @protected
+  StaffView sse_decode_staff_view(SseDeserializer deserializer);
+
+  @protected
+  TemplateView sse_decode_template_view(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -84,7 +357,28 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_decode_unit(SseDeserializer deserializer);
 
   @protected
-  int sse_decode_i_32(SseDeserializer deserializer);
+  BigInt sse_decode_usize(SseDeserializer deserializer);
+
+  @protected
+  void
+  sse_encode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    Till self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    Till self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void
+  sse_encode_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    Till self,
+    SseSerializer serializer,
+  );
 
   @protected
   void sse_encode_String(String self, SseSerializer serializer);
@@ -93,10 +387,91 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_i_64(
+    PlatformInt64 self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_order_view(
+    OrderView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_owner_kit(
+    OwnerKit self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_setup_input(
+    SetupInput self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_staff_view(
+    StaffView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_cash_view(CashView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_center_view(CenterView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_currency_view(CurrencyView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_i_32(int self, SseSerializer serializer);
+
+  @protected
   void sse_encode_i_64(PlatformInt64 self, SseSerializer serializer);
 
   @protected
+  void sse_encode_item_view(ItemView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_line_view(LineView self, SseSerializer serializer);
+
+  @protected
   void sse_encode_list_String(List<String> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_center_view(
+    List<CenterView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_currency_view(
+    List<CurrencyView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_item_view(List<ItemView> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_line_view(List<LineView> self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_list_option_group_view(
+    List<OptionGroupView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_option_view(
+    List<OptionView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_prim_u_8_loose(List<int> self, SseSerializer serializer);
 
   @protected
   void sse_encode_list_prim_u_8_strict(
@@ -105,7 +480,88 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_record_string_string(
+    List<(String, String)> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_staff_view(
+    List<StaffView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_template_view(
+    List<TemplateView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_String(String? self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_opt_box_autoadd_i_64(
+    PlatformInt64? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_order_view(
+    OrderView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_owner_kit(
+    OwnerKit? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_staff_view(
+    StaffView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_option_group_view(
+    OptionGroupView self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_option_view(OptionView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_order_view(OrderView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_owner_kit(OwnerKit self, SseSerializer serializer);
+
+  @protected
   void sse_encode_peer_self_test(PeerSelfTest self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_record_string_string(
+    (String, String) self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_report_view(ReportView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_setup_input(SetupInput self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_shift_view(ShiftView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_staff_view(StaffView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_template_view(TemplateView self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
@@ -120,13 +576,29 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_unit(void self, SseSerializer serializer);
 
   @protected
-  void sse_encode_i_32(int self, SseSerializer serializer);
+  void sse_encode_usize(BigInt self, SseSerializer serializer);
 }
 
 // Section: wire_class
 
 class RustLibWire implements BaseWire {
   RustLibWire.fromExternalLibrary(ExternalLibrary lib);
+
+  void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+        ptr,
+      );
+
+  void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    int ptr,
+  ) => wasmModule
+      .rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+        ptr,
+      );
 }
 
 @JS('wasm_bindgen')
@@ -134,4 +606,14 @@ external RustLibWasmModule get wasmModule;
 
 @JS()
 @anonymous
-extension type RustLibWasmModule._(JSObject _) implements JSObject {}
+extension type RustLibWasmModule._(JSObject _) implements JSObject {
+  external void
+  rust_arc_increment_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    int ptr,
+  );
+
+  external void
+  rust_arc_decrement_strong_count_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+    int ptr,
+  );
+}
