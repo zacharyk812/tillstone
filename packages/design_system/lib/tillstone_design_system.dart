@@ -3,5 +3,6 @@
 library;
 
 export 'src/button.dart';
+export 'src/components.dart';
 export 'src/theme.dart';
 export 'src/tokens.g.dart';

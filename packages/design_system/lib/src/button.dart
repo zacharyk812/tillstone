@@ -49,10 +49,7 @@ class PosButton extends StatelessWidget {
             onTap: onPressed,
             borderRadius: BorderRadius.circular(PosRadius.md),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: PosSpacing.lg,
-                vertical: PosSpacing.md,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: PosSpacing.lg, vertical: PosSpacing.md),
               child: Center(
                 widthFactor: 1,
                 child: Text(
