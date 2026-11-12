@@ -29,7 +29,7 @@
 
 use crate::api::register::*;
 use flutter_rust_bridge::for_generated::byteorder::{NativeEndian, ReadBytesExt, WriteBytesExt};
-use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
+use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
 use flutter_rust_bridge::{Handler, IntoIntoDart};
 
 // Section: boilerplate
@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.13.0";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1118259096;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -868950106;
 
 // Section: executor
 
@@ -260,6 +260,47 @@ fn wire__crate__api__register__Till_close_shift_impl(
         },
     )
 }
+fn wire__crate__api__register__Till_create_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "Till_create",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_db_path = <String>::sse_decode(&mut deserializer);
+            let api_db_key = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api_device_secret = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api_setup = <crate::api::register::SetupInput>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let output_ok = crate::api::register::Till::create(
+                        api_db_path,
+                        api_db_key,
+                        api_device_secret,
+                        api_setup,
+                    )?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
 fn wire__crate__api__register__Till_create_demo_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
@@ -285,7 +326,6 @@ fn wire__crate__api__register__Till_create_demo_impl(
             let api_db_path = <String>::sse_decode(&mut deserializer);
             let api_db_key = <Vec<u8>>::sse_decode(&mut deserializer);
             let api_device_secret = <Vec<u8>>::sse_decode(&mut deserializer);
-            let api_owner_secret = <Vec<u8>>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
                 transform_result_sse::<_, String>((move || {
@@ -293,7 +333,6 @@ fn wire__crate__api__register__Till_create_demo_impl(
                         api_db_path,
                         api_db_key,
                         api_device_secret,
-                        api_owner_secret,
                     )?;
                     std::result::Result::Ok(output_ok)
                 })())
@@ -694,6 +733,61 @@ fn wire__crate__api__register__Till_pay_cash_impl(
                         &*api_that_guard,
                         api_order_id,
                         api_given_minor,
+                    )?;
+                    std::result::Result::Ok(output_ok)
+                })())
+            }
+        },
+    )
+}
+fn wire__crate__api__register__Till_recovery_code_impl(
+    port_: flutter_rust_bridge::for_generated::MessagePort,
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_normal::<flutter_rust_bridge::for_generated::SseCodec, _, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "Till_recovery_code",
+            port: Some(port_),
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Till>,
+            >>::sse_decode(&mut deserializer);
+            let api_sealed_owner_key = <Vec<u8>>::sse_decode(&mut deserializer);
+            let api_passphrase = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            move |context| {
+                transform_result_sse::<_, String>((move || {
+                    let mut api_that_guard = None;
+                    let decode_indices_ =
+                        flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                            flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                                &api_that, 0, false,
+                            ),
+                        ]);
+                    for i in decode_indices_ {
+                        match i {
+                            0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                            _ => unreachable!(),
+                        }
+                    }
+                    let api_that_guard = api_that_guard.unwrap();
+                    let output_ok = crate::api::register::Till::recovery_code(
+                        &*api_that_guard,
+                        api_sealed_owner_key,
+                        api_passphrase,
                     )?;
                     std::result::Result::Ok(output_ok)
                 })())
@@ -1147,6 +1241,53 @@ fn wire__crate__api__register__Till_staff_impl(
         },
     )
 }
+fn wire__crate__api__register__Till_take_owner_kit_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "Till_take_owner_kit",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Till>,
+            >>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, false,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
+                        _ => unreachable!(),
+                    }
+                }
+                let api_that_guard = api_that_guard.unwrap();
+                let output_ok =
+                    Ok::<_, ()>(crate::api::register::Till::take_owner_kit(&*api_that_guard))?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__register__Till_training_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1249,6 +1390,97 @@ fn wire__crate__api__register__Till_void_order_impl(
         },
     )
 }
+fn wire__crate__api__register__check_passphrase_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "check_passphrase",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_passphrase = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok =
+                    Ok::<_, ()>(crate::api::register::check_passphrase(api_passphrase))?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__register__check_pin_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "check_pin",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_pin = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>(crate::api::register::check_pin(api_pin))?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__register__check_tax_percent_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "check_tax_percent",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_percent = <String>::sse_decode(&mut deserializer);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>(crate::api::register::check_tax_percent(api_percent))?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__core__core_version_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -1273,6 +1505,35 @@ fn wire__crate__api__core__core_version_impl(
             deserializer.end();
             transform_result_sse::<_, ()>((move || {
                 let output_ok = Ok::<_, ()>(crate::api::core::core_version())?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
+fn wire__crate__api__register__currencies_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "currencies",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>(crate::api::register::currencies())?;
                 std::result::Result::Ok(output_ok)
             })())
         },
@@ -1378,6 +1639,35 @@ fn wire__crate__api__core__split_evenly_impl(
         },
     )
 }
+fn wire__crate__api__register__templates_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "templates",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let output_ok = Ok::<_, ()>(crate::api::register::templates())?;
+                std::result::Result::Ok(output_ok)
+            })())
+        },
+    )
+}
 
 // Section: related_funcs
 
@@ -1436,6 +1726,15 @@ impl SseDecode for crate::api::register::CenterView {
         let mut var_name = <String>::sse_decode(deserializer);
         let mut var_mode = <String>::sse_decode(deserializer);
         return crate::api::register::CenterView { id: var_id, name: var_name, mode: var_mode };
+    }
+}
+
+impl SseDecode for crate::api::register::CurrencyView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_code = <String>::sse_decode(deserializer);
+        let mut var_name = <String>::sse_decode(deserializer);
+        return crate::api::register::CurrencyView { code: var_code, name: var_name };
     }
 }
 
@@ -1511,6 +1810,18 @@ impl SseDecode for Vec<crate::api::register::CenterView> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<crate::api::register::CenterView>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
+impl SseDecode for Vec<crate::api::register::CurrencyView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::register::CurrencyView>::sse_decode(deserializer));
         }
         return ans_;
     }
@@ -1600,6 +1911,18 @@ impl SseDecode for Vec<crate::api::register::StaffView> {
     }
 }
 
+impl SseDecode for Vec<crate::api::register::TemplateView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut len_ = <i32>::sse_decode(deserializer);
+        let mut ans_ = Vec::with_capacity(len_ as usize);
+        for idx_ in 0..len_ {
+            ans_.push(<crate::api::register::TemplateView>::sse_decode(deserializer));
+        }
+        return ans_;
+    }
+}
+
 impl SseDecode for Option<String> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1627,6 +1950,17 @@ impl SseDecode for Option<crate::api::register::OrderView> {
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<crate::api::register::OrderView>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
+    }
+}
+
+impl SseDecode for Option<crate::api::register::OwnerKit> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<crate::api::register::OwnerKit>::sse_decode(deserializer));
         } else {
             return None;
         }
@@ -1700,6 +2034,18 @@ impl SseDecode for crate::api::register::OrderView {
     }
 }
 
+impl SseDecode for crate::api::register::OwnerKit {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_sealedOwnerKey = <Vec<u8>>::sse_decode(deserializer);
+        let mut var_recoveryCode = <String>::sse_decode(deserializer);
+        return crate::api::register::OwnerKit {
+            sealed_owner_key: var_sealedOwnerKey,
+            recovery_code: var_recoveryCode,
+        };
+    }
+}
+
 impl SseDecode for crate::api::core::PeerSelfTest {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1745,6 +2091,34 @@ impl SseDecode for crate::api::register::ReportView {
     }
 }
 
+impl SseDecode for crate::api::register::SetupInput {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_businessName = <String>::sse_decode(deserializer);
+        let mut var_currency = <String>::sse_decode(deserializer);
+        let mut var_templateId = <String>::sse_decode(deserializer);
+        let mut var_sampleItems = <bool>::sse_decode(deserializer);
+        let mut var_taxName = <Option<String>>::sse_decode(deserializer);
+        let mut var_taxPercent = <String>::sse_decode(deserializer);
+        let mut var_taxIncluded = <bool>::sse_decode(deserializer);
+        let mut var_ownerName = <String>::sse_decode(deserializer);
+        let mut var_ownerPin = <String>::sse_decode(deserializer);
+        let mut var_passphrase = <String>::sse_decode(deserializer);
+        return crate::api::register::SetupInput {
+            business_name: var_businessName,
+            currency: var_currency,
+            template_id: var_templateId,
+            sample_items: var_sampleItems,
+            tax_name: var_taxName,
+            tax_percent: var_taxPercent,
+            tax_included: var_taxIncluded,
+            owner_name: var_ownerName,
+            owner_pin: var_ownerPin,
+            passphrase: var_passphrase,
+        };
+    }
+}
+
 impl SseDecode for crate::api::register::ShiftView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -1773,6 +2147,26 @@ impl SseDecode for crate::api::register::StaffView {
             name: var_name,
             initials: var_initials,
             role: var_role,
+        };
+    }
+}
+
+impl SseDecode for crate::api::register::TemplateView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut var_id = <String>::sse_decode(deserializer);
+        let mut var_name = <String>::sse_decode(deserializer);
+        let mut var_description = <String>::sse_decode(deserializer);
+        let mut var_areas = <Vec<String>>::sse_decode(deserializer);
+        let mut var_itemCount = <u32>::sse_decode(deserializer);
+        let mut var_demo = <bool>::sse_decode(deserializer);
+        return crate::api::register::TemplateView {
+            id: var_id,
+            name: var_name,
+            description: var_description,
+            areas: var_areas,
+            item_count: var_itemCount,
+            demo: var_demo,
         };
     }
 }
@@ -1822,18 +2216,22 @@ fn pde_ffi_dispatcher_primary_impl(
         1 => wire__crate__api__register__Till_add_item_impl(port, ptr, rust_vec_len, data_len),
         3 => wire__crate__api__register__Till_checkpoint_impl(port, ptr, rust_vec_len, data_len),
         4 => wire__crate__api__register__Till_close_shift_impl(port, ptr, rust_vec_len, data_len),
-        5 => wire__crate__api__register__Till_create_demo_impl(port, ptr, rust_vec_len, data_len),
-        7 => wire__crate__api__register__Till_discount_impl(port, ptr, rust_vec_len, data_len),
-        9 => wire__crate__api__register__Till_open_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__register__Till_open_order_impl(port, ptr, rust_vec_len, data_len),
-        11 => wire__crate__api__register__Till_open_shift_impl(port, ptr, rust_vec_len, data_len),
-        13 => wire__crate__api__register__Till_pay_cash_impl(port, ptr, rust_vec_len, data_len),
-        16 => wire__crate__api__register__Till_send_impl(port, ptr, rust_vec_len, data_len),
-        17 => wire__crate__api__register__Till_set_quantity_impl(port, ptr, rust_vec_len, data_len),
-        19 => wire__crate__api__register__Till_sign_in_impl(port, ptr, rust_vec_len, data_len),
-        24 => wire__crate__api__register__Till_void_order_impl(port, ptr, rust_vec_len, data_len),
-        26 => wire__crate__api__core__init_app_impl(port, ptr, rust_vec_len, data_len),
-        27 => wire__crate__api__core__peer_self_test_impl(port, ptr, rust_vec_len, data_len),
+        5 => wire__crate__api__register__Till_create_impl(port, ptr, rust_vec_len, data_len),
+        6 => wire__crate__api__register__Till_create_demo_impl(port, ptr, rust_vec_len, data_len),
+        8 => wire__crate__api__register__Till_discount_impl(port, ptr, rust_vec_len, data_len),
+        10 => wire__crate__api__register__Till_open_impl(port, ptr, rust_vec_len, data_len),
+        11 => wire__crate__api__register__Till_open_order_impl(port, ptr, rust_vec_len, data_len),
+        12 => wire__crate__api__register__Till_open_shift_impl(port, ptr, rust_vec_len, data_len),
+        14 => wire__crate__api__register__Till_pay_cash_impl(port, ptr, rust_vec_len, data_len),
+        15 => {
+            wire__crate__api__register__Till_recovery_code_impl(port, ptr, rust_vec_len, data_len)
+        }
+        18 => wire__crate__api__register__Till_send_impl(port, ptr, rust_vec_len, data_len),
+        19 => wire__crate__api__register__Till_set_quantity_impl(port, ptr, rust_vec_len, data_len),
+        21 => wire__crate__api__register__Till_sign_in_impl(port, ptr, rust_vec_len, data_len),
+        27 => wire__crate__api__register__Till_void_order_impl(port, ptr, rust_vec_len, data_len),
+        33 => wire__crate__api__core__init_app_impl(port, ptr, rust_vec_len, data_len),
+        34 => wire__crate__api__core__peer_self_test_impl(port, ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1847,18 +2245,24 @@ fn pde_ffi_dispatcher_sync_impl(
     // Codec=Pde (Serialization + dispatch), see doc to use other codecs
     match func_id {
         2 => wire__crate__api__register__Till_business_name_impl(ptr, rust_vec_len, data_len),
-        6 => wire__crate__api__register__Till_demo_pins_impl(ptr, rust_vec_len, data_len),
-        8 => wire__crate__api__register__Till_items_impl(ptr, rust_vec_len, data_len),
-        12 => wire__crate__api__register__Till_order_impl(ptr, rust_vec_len, data_len),
-        14 => wire__crate__api__register__Till_report_impl(ptr, rust_vec_len, data_len),
-        15 => wire__crate__api__register__Till_revenue_centers_impl(ptr, rust_vec_len, data_len),
-        18 => wire__crate__api__register__Till_set_training_impl(ptr, rust_vec_len, data_len),
-        20 => wire__crate__api__register__Till_sign_out_impl(ptr, rust_vec_len, data_len),
-        21 => wire__crate__api__register__Till_signed_in_impl(ptr, rust_vec_len, data_len),
-        22 => wire__crate__api__register__Till_staff_impl(ptr, rust_vec_len, data_len),
-        23 => wire__crate__api__register__Till_training_impl(ptr, rust_vec_len, data_len),
-        25 => wire__crate__api__core__core_version_impl(ptr, rust_vec_len, data_len),
-        28 => wire__crate__api__core__split_evenly_impl(ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__register__Till_demo_pins_impl(ptr, rust_vec_len, data_len),
+        9 => wire__crate__api__register__Till_items_impl(ptr, rust_vec_len, data_len),
+        13 => wire__crate__api__register__Till_order_impl(ptr, rust_vec_len, data_len),
+        16 => wire__crate__api__register__Till_report_impl(ptr, rust_vec_len, data_len),
+        17 => wire__crate__api__register__Till_revenue_centers_impl(ptr, rust_vec_len, data_len),
+        20 => wire__crate__api__register__Till_set_training_impl(ptr, rust_vec_len, data_len),
+        22 => wire__crate__api__register__Till_sign_out_impl(ptr, rust_vec_len, data_len),
+        23 => wire__crate__api__register__Till_signed_in_impl(ptr, rust_vec_len, data_len),
+        24 => wire__crate__api__register__Till_staff_impl(ptr, rust_vec_len, data_len),
+        25 => wire__crate__api__register__Till_take_owner_kit_impl(ptr, rust_vec_len, data_len),
+        26 => wire__crate__api__register__Till_training_impl(ptr, rust_vec_len, data_len),
+        28 => wire__crate__api__register__check_passphrase_impl(ptr, rust_vec_len, data_len),
+        29 => wire__crate__api__register__check_pin_impl(ptr, rust_vec_len, data_len),
+        30 => wire__crate__api__register__check_tax_percent_impl(ptr, rust_vec_len, data_len),
+        31 => wire__crate__api__core__core_version_impl(ptr, rust_vec_len, data_len),
+        32 => wire__crate__api__register__currencies_impl(ptr, rust_vec_len, data_len),
+        35 => wire__crate__api__core__split_evenly_impl(ptr, rust_vec_len, data_len),
+        36 => wire__crate__api__register__templates_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -1917,6 +2321,23 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::register::CenterView>
     for crate::api::register::CenterView
 {
     fn into_into_dart(self) -> crate::api::register::CenterView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::register::CurrencyView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [self.code.into_into_dart().into_dart(), self.name.into_into_dart().into_dart()].into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::register::CurrencyView
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::register::CurrencyView>
+    for crate::api::register::CurrencyView
+{
+    fn into_into_dart(self) -> crate::api::register::CurrencyView {
         self
     }
 }
@@ -2045,6 +2466,27 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::register::OrderView>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::register::OwnerKit {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.sealed_owner_key.into_into_dart().into_dart(),
+            self.recovery_code.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::register::OwnerKit
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::register::OwnerKit>
+    for crate::api::register::OwnerKit
+{
+    fn into_into_dart(self) -> crate::api::register::OwnerKit {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::core::PeerSelfTest {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -2093,6 +2535,35 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::register::ReportView>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::register::SetupInput {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.business_name.into_into_dart().into_dart(),
+            self.currency.into_into_dart().into_dart(),
+            self.template_id.into_into_dart().into_dart(),
+            self.sample_items.into_into_dart().into_dart(),
+            self.tax_name.into_into_dart().into_dart(),
+            self.tax_percent.into_into_dart().into_dart(),
+            self.tax_included.into_into_dart().into_dart(),
+            self.owner_name.into_into_dart().into_dart(),
+            self.owner_pin.into_into_dart().into_dart(),
+            self.passphrase.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::register::SetupInput
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::register::SetupInput>
+    for crate::api::register::SetupInput
+{
+    fn into_into_dart(self) -> crate::api::register::SetupInput {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::register::ShiftView {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -2135,6 +2606,31 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::register::StaffView>
     for crate::api::register::StaffView
 {
     fn into_into_dart(self) -> crate::api::register::StaffView {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::register::TemplateView {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        [
+            self.id.into_into_dart().into_dart(),
+            self.name.into_into_dart().into_dart(),
+            self.description.into_into_dart().into_dart(),
+            self.areas.into_into_dart().into_dart(),
+            self.item_count.into_into_dart().into_dart(),
+            self.demo.into_into_dart().into_dart(),
+        ]
+        .into_dart()
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::register::TemplateView
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::register::TemplateView>
+    for crate::api::register::TemplateView
+{
+    fn into_into_dart(self) -> crate::api::register::TemplateView {
         self
     }
 }
@@ -2186,6 +2682,14 @@ impl SseEncode for crate::api::register::CenterView {
         <String>::sse_encode(self.id, serializer);
         <String>::sse_encode(self.name, serializer);
         <String>::sse_encode(self.mode, serializer);
+    }
+}
+
+impl SseEncode for crate::api::register::CurrencyView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.code, serializer);
+        <String>::sse_encode(self.name, serializer);
     }
 }
 
@@ -2242,6 +2746,16 @@ impl SseEncode for Vec<crate::api::register::CenterView> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::register::CenterView>::sse_encode(item, serializer);
+        }
+    }
+}
+
+impl SseEncode for Vec<crate::api::register::CurrencyView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::register::CurrencyView>::sse_encode(item, serializer);
         }
     }
 }
@@ -2316,6 +2830,16 @@ impl SseEncode for Vec<crate::api::register::StaffView> {
     }
 }
 
+impl SseEncode for Vec<crate::api::register::TemplateView> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(self.len() as _, serializer);
+        for item in self {
+            <crate::api::register::TemplateView>::sse_encode(item, serializer);
+        }
+    }
+}
+
 impl SseEncode for Option<String> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2342,6 +2866,16 @@ impl SseEncode for Option<crate::api::register::OrderView> {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <crate::api::register::OrderView>::sse_encode(value, serializer);
+        }
+    }
+}
+
+impl SseEncode for Option<crate::api::register::OwnerKit> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <crate::api::register::OwnerKit>::sse_encode(value, serializer);
         }
     }
 }
@@ -2392,6 +2926,14 @@ impl SseEncode for crate::api::register::OrderView {
     }
 }
 
+impl SseEncode for crate::api::register::OwnerKit {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <Vec<u8>>::sse_encode(self.sealed_owner_key, serializer);
+        <String>::sse_encode(self.recovery_code, serializer);
+    }
+}
+
 impl SseEncode for crate::api::core::PeerSelfTest {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2422,6 +2964,22 @@ impl SseEncode for crate::api::register::ReportView {
     }
 }
 
+impl SseEncode for crate::api::register::SetupInput {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.business_name, serializer);
+        <String>::sse_encode(self.currency, serializer);
+        <String>::sse_encode(self.template_id, serializer);
+        <bool>::sse_encode(self.sample_items, serializer);
+        <Option<String>>::sse_encode(self.tax_name, serializer);
+        <String>::sse_encode(self.tax_percent, serializer);
+        <bool>::sse_encode(self.tax_included, serializer);
+        <String>::sse_encode(self.owner_name, serializer);
+        <String>::sse_encode(self.owner_pin, serializer);
+        <String>::sse_encode(self.passphrase, serializer);
+    }
+}
+
 impl SseEncode for crate::api::register::ShiftView {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -2439,6 +2997,18 @@ impl SseEncode for crate::api::register::StaffView {
         <String>::sse_encode(self.name, serializer);
         <String>::sse_encode(self.initials, serializer);
         <String>::sse_encode(self.role, serializer);
+    }
+}
+
+impl SseEncode for crate::api::register::TemplateView {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <String>::sse_encode(self.id, serializer);
+        <String>::sse_encode(self.name, serializer);
+        <String>::sse_encode(self.description, serializer);
+        <Vec<String>>::sse_encode(self.areas, serializer);
+        <u32>::sse_encode(self.item_count, serializer);
+        <bool>::sse_encode(self.demo, serializer);
     }
 }
 
@@ -2487,7 +3057,7 @@ mod io {
     use flutter_rust_bridge::for_generated::byteorder::{
         NativeEndian, ReadBytesExt, WriteBytesExt,
     };
-    use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
+    use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
 
     // Section: boilerplate
@@ -2526,7 +3096,7 @@ mod web {
     };
     use flutter_rust_bridge::for_generated::wasm_bindgen;
     use flutter_rust_bridge::for_generated::wasm_bindgen::prelude::*;
-    use flutter_rust_bridge::for_generated::{Lifetimeable, Lockable, transform_result_dco};
+    use flutter_rust_bridge::for_generated::{transform_result_dco, Lifetimeable, Lockable};
     use flutter_rust_bridge::{Handler, IntoIntoDart};
 
     // Section: boilerplate

@@ -5,7 +5,7 @@
 use std::sync::{Mutex, MutexGuard};
 
 use flutter_rust_bridge::frb;
-use pos_app::{AppError, Register, demo};
+use pos_app::{AppError, BusinessSetup, Register, demo, owner_key, template};
 use pos_core::{
     catalog::ModePreset,
     events::Fulfillment,
@@ -14,6 +14,7 @@ use pos_core::{
     order::Status,
 };
 use uuid::Uuid;
+use zeroize::Zeroizing;
 
 /// Formats money for display, e.g. "$12.34", "€5.00", "1,500 JPY".
 /// (Full localization comes with translations, PLAN §11.)
@@ -134,6 +135,96 @@ pub struct ReportView {
     pub by_tender: Vec<(String, String)>,
 }
 
+/// A starting point the setup wizard offers (from `templates/*.json`).
+pub struct TemplateView {
+    pub id: String,
+    pub name: String,
+    pub description: String,
+    pub areas: Vec<String>,
+    pub item_count: u32,
+    pub demo: bool,
+}
+
+pub struct CurrencyView {
+    pub code: String,
+    pub name: String,
+}
+
+/// What the setup wizard collected.
+pub struct SetupInput {
+    pub business_name: String,
+    pub currency: String,
+    pub template_id: String,
+    pub sample_items: bool,
+    /// `None` for no default tax.
+    pub tax_name: Option<String>,
+    /// e.g. "8.25".
+    pub tax_percent: String,
+    pub tax_included: bool,
+    pub owner_name: String,
+    pub owner_pin: String,
+    pub passphrase: String,
+}
+
+/// The owner key, sealed with the passphrase for storage, and the recovery
+/// code to print. Given to the app once, right after setup.
+pub struct OwnerKit {
+    pub sealed_owner_key: Vec<u8>,
+    pub recovery_code: String,
+}
+
+/// Business templates for the setup wizard, demo first.
+#[frb(sync)]
+pub fn templates() -> Vec<TemplateView> {
+    template::all()
+        .into_iter()
+        .map(|t| TemplateView {
+            areas: t.areas.iter().map(|a| a.name.clone()).collect(),
+            item_count: t.items.len() as u32,
+            demo: t.demo.is_some(),
+            id: t.id,
+            name: t.name,
+            description: t.description,
+        })
+        .collect()
+}
+
+#[frb(sync)]
+pub fn currencies() -> Vec<CurrencyView> {
+    template::CURRENCIES
+        .iter()
+        .map(|(code, _, name)| CurrencyView { code: (*code).into(), name: (*name).into() })
+        .collect()
+}
+
+/// `None` if the PIN is acceptable, else why not.
+#[frb(sync)]
+pub fn check_pin(pin: String) -> Option<String> {
+    pos_app::hash_pin_check(&pin).err().map(err)
+}
+
+/// `None` if the passphrase is acceptable, else why not.
+#[frb(sync)]
+pub fn check_passphrase(passphrase: String) -> Option<String> {
+    owner_key::check_passphrase(&passphrase).err().map(err)
+}
+
+/// `None` if the text is a valid tax rate, else why not.
+#[frb(sync)]
+pub fn check_tax_percent(percent: String) -> Option<String> {
+    template::parse_percent(&percent).err().map(err)
+}
+
+fn key32(v: Vec<u8>) -> Result<Zeroizing<[u8; 32]>, String> {
+    let v = Zeroizing::new(v);
+    let mut out = Zeroizing::new([0u8; 32]);
+    if v.len() != 32 {
+        return Err("keys must be 32 bytes".into());
+    }
+    out.copy_from_slice(&v);
+    Ok(out)
+}
+
 fn initials(name: &str) -> String {
     name.split_whitespace()
         .filter_map(|w| w.chars().next())
@@ -149,6 +240,7 @@ fn initials(name: &str) -> String {
 #[frb(opaque)]
 pub struct Till {
     reg: Mutex<Register>,
+    kit: Mutex<Option<OwnerKit>>,
 }
 
 impl Till {
@@ -158,35 +250,105 @@ impl Till {
         self.reg.lock().unwrap_or_else(|e| e.into_inner())
     }
 
+    fn new(reg: Register, kit: Option<OwnerKit>) -> Till {
+        Till { reg: Mutex::new(reg), kit: Mutex::new(kit) }
+    }
+
+    /// Sets up a new business on this device, with a fresh owner key
+    /// sealed by the owner passphrase. Take the [`OwnerKit`] right after.
+    pub fn create(
+        db_path: String,
+        db_key: Vec<u8>,
+        device_secret: Vec<u8>,
+        setup: SetupInput,
+    ) -> Result<Till, String> {
+        owner_key::check_passphrase(&setup.passphrase).map_err(err)?;
+        let template = template::get(&setup.template_id).map_err(err)?;
+        let tax = match setup.tax_name.filter(|n| !n.trim().is_empty()) {
+            Some(name) => Some((
+                name.trim().to_string(),
+                template::parse_percent(&setup.tax_percent).map_err(err)?,
+                setup.tax_included,
+            )),
+            None => None,
+        };
+        let business = BusinessSetup {
+            business_name: setup.business_name.trim().to_string(),
+            currency: template::currency(&setup.currency).map_err(err)?,
+            owner_name: setup.owner_name.trim().to_string(),
+            owner_pin: setup.owner_pin,
+            revenue_centers: template.areas(),
+            tax,
+            order_prefix: "A".into(),
+        };
+        if business.business_name.is_empty() || business.owner_name.is_empty() {
+            return Err("the business and owner need names".into());
+        }
+        let owner = owner_key::generate().map_err(err)?;
+        let kit = OwnerKit {
+            sealed_owner_key: owner_key::seal(&owner, &setup.passphrase).map_err(err)?,
+            recovery_code: owner_key::recovery_code(&owner),
+        };
+        let mut reg =
+            Register::create(&db_path, &*key32(db_key)?, &*key32(device_secret)?, &owner, business)
+                .map_err(err)?;
+        if setup.sample_items {
+            template.apply_catalog(&mut reg).map_err(err)?;
+        }
+        reg.sign_out();
+        Ok(Till::new(reg, Some(kit)))
+    }
+
     /// Creates the demo business on this device (PLAN §17 "try it").
     pub fn create_demo(
         db_path: String,
         db_key: Vec<u8>,
         device_secret: Vec<u8>,
-        owner_secret: Vec<u8>,
     ) -> Result<Till, String> {
-        let key =
-            |v: Vec<u8>| <[u8; 32]>::try_from(v).map_err(|_| "keys must be 32 bytes".to_string());
+        let owner = owner_key::generate().map_err(err)?;
+        let kit = OwnerKit {
+            sealed_owner_key: owner_key::seal(&owner, demo::DEMO_PASSPHRASE).map_err(err)?,
+            recovery_code: owner_key::recovery_code(&owner),
+        };
         let mut reg = Register::create(
             &db_path,
-            &key(db_key)?,
-            &key(device_secret)?,
-            &key(owner_secret)?,
+            &*key32(db_key)?,
+            &*key32(device_secret)?,
+            &owner,
             demo::setup(),
         )
         .map_err(err)?;
         demo::seed(&mut reg).map_err(err)?;
         reg.sign_out();
-        Ok(Till { reg: Mutex::new(reg) })
+        Ok(Till::new(reg, Some(kit)))
     }
 
     /// Opens the register stored at `db_path`.
     pub fn open(db_path: String, db_key: Vec<u8>, device_secret: Vec<u8>) -> Result<Till, String> {
-        let key =
-            |v: Vec<u8>| <[u8; 32]>::try_from(v).map_err(|_| "keys must be 32 bytes".to_string());
-        Register::open(&db_path, &key(db_key)?, &key(device_secret)?)
-            .map(|reg| Till { reg: Mutex::new(reg) })
+        Register::open(&db_path, &*key32(db_key)?, &*key32(device_secret)?)
+            .map(|reg| Till::new(reg, None))
             .map_err(err)
+    }
+
+    /// The owner kit from [`Till::create`], once. Store the sealed key and
+    /// show the recovery code.
+    #[frb(sync)]
+    pub fn take_owner_kit(&self) -> Option<OwnerKit> {
+        self.kit.lock().unwrap_or_else(|e| e.into_inner()).take()
+    }
+
+    /// Shows the recovery code again, given the sealed key and passphrase
+    /// (e.g. if the app closed before the owner wrote it down).
+    pub fn recovery_code(
+        &self,
+        sealed_owner_key: Vec<u8>,
+        passphrase: String,
+    ) -> Result<String, String> {
+        let owner = owner_key::unseal(&sealed_owner_key, &passphrase).map_err(err)?;
+        if !self.r().is_owner_secret(&owner) {
+            return Err("that owner key belongs to a different business".into());
+        }
+        Ok(owner_key::recovery_code(&owner))
     }
 
     #[frb(sync)]
@@ -196,10 +358,7 @@ impl Till {
 
     #[frb(sync)]
     pub fn demo_pins(&self) -> Vec<(String, String)> {
-        vec![
-            ("Alex (owner)".into(), demo::DEMO_OWNER_PIN.into()),
-            ("Maya (cashier)".into(), demo::DEMO_CASHIER_PIN.into()),
-        ]
+        demo::pins()
     }
 
     #[frb(sync)]

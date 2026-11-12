@@ -7,7 +7,26 @@ import '../frb_generated.dart';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `err`, `format_money`, `initials`, `parse`, `r`
+// These functions are ignored because they are not marked as `pub`: `err`, `format_money`, `initials`, `key32`, `new`, `parse`, `r`
+
+/// Business templates for the setup wizard, demo first.
+List<TemplateView> templates() =>
+    RustLib.instance.api.crateApiRegisterTemplates();
+
+List<CurrencyView> currencies() =>
+    RustLib.instance.api.crateApiRegisterCurrencies();
+
+/// `None` if the PIN is acceptable, else why not.
+String? checkPin({required String pin}) =>
+    RustLib.instance.api.crateApiRegisterCheckPin(pin: pin);
+
+/// `None` if the passphrase is acceptable, else why not.
+String? checkPassphrase({required String passphrase}) => RustLib.instance.api
+    .crateApiRegisterCheckPassphrase(passphrase: passphrase);
+
+/// `None` if the text is a valid tax rate, else why not.
+String? checkTaxPercent({required String percent}) =>
+    RustLib.instance.api.crateApiRegisterCheckTaxPercent(percent: percent);
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<Till>>
 abstract class Till implements RustOpaqueInterface {
@@ -29,17 +48,29 @@ abstract class Till implements RustOpaqueInterface {
     required PlatformInt64 countedMinor,
   });
 
+  /// Sets up a new business on this device, with a fresh owner key
+  /// sealed by the owner passphrase. Take the [`OwnerKit`] right after.
+  static Future<Till> create({
+    required String dbPath,
+    required List<int> dbKey,
+    required List<int> deviceSecret,
+    required SetupInput setup,
+  }) => RustLib.instance.api.crateApiRegisterTillCreate(
+    dbPath: dbPath,
+    dbKey: dbKey,
+    deviceSecret: deviceSecret,
+    setup: setup,
+  );
+
   /// Creates the demo business on this device (PLAN §17 "try it").
   static Future<Till> createDemo({
     required String dbPath,
     required List<int> dbKey,
     required List<int> deviceSecret,
-    required List<int> ownerSecret,
   }) => RustLib.instance.api.crateApiRegisterTillCreateDemo(
     dbPath: dbPath,
     dbKey: dbKey,
     deviceSecret: deviceSecret,
-    ownerSecret: ownerSecret,
   );
 
   List<(String, String)> demoPins();
@@ -78,6 +109,13 @@ abstract class Till implements RustOpaqueInterface {
     required PlatformInt64 givenMinor,
   });
 
+  /// Shows the recovery code again, given the sealed key and passphrase
+  /// (e.g. if the app closed before the owner wrote it down).
+  Future<String> recoveryCode({
+    required List<int> sealedOwnerKey,
+    required String passphrase,
+  });
+
   ReportView report();
 
   List<CenterView> revenueCenters();
@@ -100,6 +138,10 @@ abstract class Till implements RustOpaqueInterface {
   StaffView? signedIn();
 
   List<StaffView> staff();
+
+  /// The owner kit from [`Till::create`], once. Store the sealed key and
+  /// show the recovery code.
+  OwnerKit? takeOwnerKit();
 
   bool training();
 
@@ -144,6 +186,24 @@ class CenterView {
           id == other.id &&
           name == other.name &&
           mode == other.mode;
+}
+
+class CurrencyView {
+  final String code;
+  final String name;
+
+  const CurrencyView({required this.code, required this.name});
+
+  @override
+  int get hashCode => code.hashCode ^ name.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CurrencyView &&
+          runtimeType == other.runtimeType &&
+          code == other.code &&
+          name == other.name;
 }
 
 class ItemView {
@@ -329,6 +389,26 @@ class OrderView {
           closed == other.closed;
 }
 
+/// The owner key, sealed with the passphrase for storage, and the recovery
+/// code to print. Given to the app once, right after setup.
+class OwnerKit {
+  final Uint8List sealedOwnerKey;
+  final String recoveryCode;
+
+  const OwnerKit({required this.sealedOwnerKey, required this.recoveryCode});
+
+  @override
+  int get hashCode => sealedOwnerKey.hashCode ^ recoveryCode.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is OwnerKit &&
+          runtimeType == other.runtimeType &&
+          sealedOwnerKey == other.sealedOwnerKey &&
+          recoveryCode == other.recoveryCode;
+}
+
 class ReportView {
   final int orders;
   final String total;
@@ -362,6 +442,66 @@ class ReportView {
           tips == other.tips &&
           refunds == other.refunds &&
           byTender == other.byTender;
+}
+
+/// What the setup wizard collected.
+class SetupInput {
+  final String businessName;
+  final String currency;
+  final String templateId;
+  final bool sampleItems;
+
+  /// `None` for no default tax.
+  final String? taxName;
+
+  /// e.g. "8.25".
+  final String taxPercent;
+  final bool taxIncluded;
+  final String ownerName;
+  final String ownerPin;
+  final String passphrase;
+
+  const SetupInput({
+    required this.businessName,
+    required this.currency,
+    required this.templateId,
+    required this.sampleItems,
+    this.taxName,
+    required this.taxPercent,
+    required this.taxIncluded,
+    required this.ownerName,
+    required this.ownerPin,
+    required this.passphrase,
+  });
+
+  @override
+  int get hashCode =>
+      businessName.hashCode ^
+      currency.hashCode ^
+      templateId.hashCode ^
+      sampleItems.hashCode ^
+      taxName.hashCode ^
+      taxPercent.hashCode ^
+      taxIncluded.hashCode ^
+      ownerName.hashCode ^
+      ownerPin.hashCode ^
+      passphrase.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SetupInput &&
+          runtimeType == other.runtimeType &&
+          businessName == other.businessName &&
+          currency == other.currency &&
+          templateId == other.templateId &&
+          sampleItems == other.sampleItems &&
+          taxName == other.taxName &&
+          taxPercent == other.taxPercent &&
+          taxIncluded == other.taxIncluded &&
+          ownerName == other.ownerName &&
+          ownerPin == other.ownerPin &&
+          passphrase == other.passphrase;
 }
 
 class ShiftView {
@@ -418,4 +558,44 @@ class StaffView {
           name == other.name &&
           initials == other.initials &&
           role == other.role;
+}
+
+/// A starting point the setup wizard offers (from `templates/*.json`).
+class TemplateView {
+  final String id;
+  final String name;
+  final String description;
+  final List<String> areas;
+  final int itemCount;
+  final bool demo;
+
+  const TemplateView({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.areas,
+    required this.itemCount,
+    required this.demo,
+  });
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      description.hashCode ^
+      areas.hashCode ^
+      itemCount.hashCode ^
+      demo.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is TemplateView &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          description == other.description &&
+          areas == other.areas &&
+          itemCount == other.itemCount &&
+          demo == other.demo;
 }

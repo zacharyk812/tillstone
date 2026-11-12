@@ -70,7 +70,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.13.0';
 
   @override
-  int get rustContentHash => 1118259096;
+  int get rustContentHash => -868950106;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -101,11 +101,17 @@ abstract class RustLibApi extends BaseApi {
     required PlatformInt64 countedMinor,
   });
 
+  Future<Till> crateApiRegisterTillCreate({
+    required String dbPath,
+    required List<int> dbKey,
+    required List<int> deviceSecret,
+    required SetupInput setup,
+  });
+
   Future<Till> crateApiRegisterTillCreateDemo({
     required String dbPath,
     required List<int> dbKey,
     required List<int> deviceSecret,
-    required List<int> ownerSecret,
   });
 
   List<(String, String)> crateApiRegisterTillDemoPins({required Till that});
@@ -151,6 +157,12 @@ abstract class RustLibApi extends BaseApi {
     required PlatformInt64 givenMinor,
   });
 
+  Future<String> crateApiRegisterTillRecoveryCode({
+    required Till that,
+    required List<int> sealedOwnerKey,
+    required String passphrase,
+  });
+
   ReportView crateApiRegisterTillReport({required Till that});
 
   List<CenterView> crateApiRegisterTillRevenueCenters({required Till that});
@@ -181,6 +193,8 @@ abstract class RustLibApi extends BaseApi {
 
   List<StaffView> crateApiRegisterTillStaff({required Till that});
 
+  OwnerKit? crateApiRegisterTillTakeOwnerKit({required Till that});
+
   bool crateApiRegisterTillTraining({required Till that});
 
   Future<void> crateApiRegisterTillVoidOrder({
@@ -189,7 +203,15 @@ abstract class RustLibApi extends BaseApi {
     required String reason,
   });
 
+  String? crateApiRegisterCheckPassphrase({required String passphrase});
+
+  String? crateApiRegisterCheckPin({required String pin});
+
+  String? crateApiRegisterCheckTaxPercent({required String percent});
+
   String crateApiCoreCoreVersion();
+
+  List<CurrencyView> crateApiRegisterCurrencies();
 
   Future<void> crateApiCoreInitApp();
 
@@ -199,6 +221,8 @@ abstract class RustLibApi extends BaseApi {
     required PlatformInt64 amountMinor,
     required int parts,
   });
+
+  List<TemplateView> crateApiRegisterTemplates();
 
   RustArcIncrementStrongCountFnType get rust_arc_increment_strong_count_Till;
 
@@ -366,11 +390,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<Till> crateApiRegisterTillCreateDemo({
+  Future<Till> crateApiRegisterTillCreate({
     required String dbPath,
     required List<int> dbKey,
     required List<int> deviceSecret,
-    required List<int> ownerSecret,
+    required SetupInput setup,
   }) {
     return handler.executeNormal(
       NormalTask(
@@ -379,7 +403,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           sse_encode_String(dbPath, serializer);
           sse_encode_list_prim_u_8_loose(dbKey, serializer);
           sse_encode_list_prim_u_8_loose(deviceSecret, serializer);
-          sse_encode_list_prim_u_8_loose(ownerSecret, serializer);
+          sse_encode_box_autoadd_setup_input(setup, serializer);
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
@@ -392,8 +416,45 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
               sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill,
           decodeErrorData: sse_decode_String,
         ),
+        constMeta: kCrateApiRegisterTillCreateConstMeta,
+        argValues: [dbPath, dbKey, deviceSecret, setup],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillCreateConstMeta => const TaskConstMeta(
+    debugName: "Till_create",
+    argNames: ["dbPath", "dbKey", "deviceSecret", "setup"],
+  );
+
+  @override
+  Future<Till> crateApiRegisterTillCreateDemo({
+    required String dbPath,
+    required List<int> dbKey,
+    required List<int> deviceSecret,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(dbPath, serializer);
+          sse_encode_list_prim_u_8_loose(dbKey, serializer);
+          sse_encode_list_prim_u_8_loose(deviceSecret, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 6,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData:
+              sse_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill,
+          decodeErrorData: sse_decode_String,
+        ),
         constMeta: kCrateApiRegisterTillCreateDemoConstMeta,
-        argValues: [dbPath, dbKey, deviceSecret, ownerSecret],
+        argValues: [dbPath, dbKey, deviceSecret],
         apiImpl: this,
       ),
     );
@@ -402,7 +463,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiRegisterTillCreateDemoConstMeta =>
       const TaskConstMeta(
         debugName: "Till_create_demo",
-        argNames: ["dbPath", "dbKey", "deviceSecret", "ownerSecret"],
+        argNames: ["dbPath", "dbKey", "deviceSecret"],
       );
 
   @override
@@ -415,7 +476,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 6)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 7)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_record_string_string,
@@ -454,7 +515,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 7,
+            funcId: 8,
             port: port_,
           );
         },
@@ -489,7 +550,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(centerId, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 8)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 9)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_item_view,
@@ -523,7 +584,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 9,
+            funcId: 10,
             port: port_,
           );
         },
@@ -563,7 +624,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 10,
+            funcId: 11,
             port: port_,
           );
         },
@@ -601,7 +662,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 11,
+            funcId: 12,
             port: port_,
           );
         },
@@ -636,7 +697,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_String(orderId, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 12)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 13)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_opt_box_autoadd_order_view,
@@ -673,7 +734,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 13,
+            funcId: 14,
             port: port_,
           );
         },
@@ -695,6 +756,46 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  Future<String> crateApiRegisterTillRecoveryCode({
+    required Till that,
+    required List<int> sealedOwnerKey,
+    required String passphrase,
+  }) {
+    return handler.executeNormal(
+      NormalTask(
+        callFfi: (port_) {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          sse_encode_list_prim_u_8_loose(sealedOwnerKey, serializer);
+          sse_encode_String(passphrase, serializer);
+          pdeCallFfi(
+            generalizedFrbRustBinding,
+            serializer,
+            funcId: 15,
+            port: port_,
+          );
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_String,
+          decodeErrorData: sse_decode_String,
+        ),
+        constMeta: kCrateApiRegisterTillRecoveryCodeConstMeta,
+        argValues: [that, sealedOwnerKey, passphrase],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillRecoveryCodeConstMeta =>
+      const TaskConstMeta(
+        debugName: "Till_recovery_code",
+        argNames: ["that", "sealedOwnerKey", "passphrase"],
+      );
+
+  @override
   ReportView crateApiRegisterTillReport({required Till that}) {
     return handler.executeSync(
       SyncTask(
@@ -704,7 +805,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 14)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 16)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_report_view,
@@ -730,7 +831,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 15)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 17)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_center_view,
@@ -766,7 +867,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 16,
+            funcId: 18,
             port: port_,
           );
         },
@@ -807,7 +908,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 17,
+            funcId: 19,
             port: port_,
           );
         },
@@ -842,7 +943,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             serializer,
           );
           sse_encode_bool(on_, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 18)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -880,7 +981,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 19,
+            funcId: 21,
             port: port_,
           );
         },
@@ -910,7 +1011,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 20)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_unit,
@@ -936,7 +1037,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 21)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_opt_box_autoadd_staff_view,
@@ -962,7 +1063,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 22)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 24)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_staff_view,
@@ -979,6 +1080,32 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "Till_staff", argNames: ["that"]);
 
   @override
+  OwnerKit? crateApiRegisterTillTakeOwnerKit({required Till that}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerTill(
+            that,
+            serializer,
+          );
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_box_autoadd_owner_kit,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTillTakeOwnerKitConstMeta,
+        argValues: [that],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTillTakeOwnerKitConstMeta =>
+      const TaskConstMeta(debugName: "Till_take_owner_kit", argNames: ["that"]);
+
+  @override
   bool crateApiRegisterTillTraining({required Till that}) {
     return handler.executeSync(
       SyncTask(
@@ -988,7 +1115,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
             that,
             serializer,
           );
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 23)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 26)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_bool,
@@ -1023,7 +1150,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 24,
+            funcId: 27,
             port: port_,
           );
         },
@@ -1045,12 +1172,87 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
+  String? crateApiRegisterCheckPassphrase({required String passphrase}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(passphrase, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterCheckPassphraseConstMeta,
+        argValues: [passphrase],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterCheckPassphraseConstMeta =>
+      const TaskConstMeta(
+        debugName: "check_passphrase",
+        argNames: ["passphrase"],
+      );
+
+  @override
+  String? crateApiRegisterCheckPin({required String pin}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(pin, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 29)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterCheckPinConstMeta,
+        argValues: [pin],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterCheckPinConstMeta =>
+      const TaskConstMeta(debugName: "check_pin", argNames: ["pin"]);
+
+  @override
+  String? crateApiRegisterCheckTaxPercent({required String percent}) {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          sse_encode_String(percent, serializer);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 30)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_opt_String,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterCheckTaxPercentConstMeta,
+        argValues: [percent],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterCheckTaxPercentConstMeta =>
+      const TaskConstMeta(
+        debugName: "check_tax_percent",
+        argNames: ["percent"],
+      );
+
+  @override
   String crateApiCoreCoreVersion() {
     return handler.executeSync(
       SyncTask(
         callFfi: () {
           final serializer = SseSerializer(generalizedFrbRustBinding);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 25)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 31)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_String,
@@ -1067,6 +1269,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(debugName: "core_version", argNames: []);
 
   @override
+  List<CurrencyView> crateApiRegisterCurrencies() {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 32)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_currency_view,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterCurrenciesConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterCurrenciesConstMeta =>
+      const TaskConstMeta(debugName: "currencies", argNames: []);
+
+  @override
   Future<void> crateApiCoreInitApp() {
     return handler.executeNormal(
       NormalTask(
@@ -1075,7 +1299,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 26,
+            funcId: 33,
             port: port_,
           );
         },
@@ -1102,7 +1326,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           pdeCallFfi(
             generalizedFrbRustBinding,
             serializer,
-            funcId: 27,
+            funcId: 34,
             port: port_,
           );
         },
@@ -1131,7 +1355,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           final serializer = SseSerializer(generalizedFrbRustBinding);
           sse_encode_i_64(amountMinor, serializer);
           sse_encode_u_32(parts, serializer);
-          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 28)!;
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 35)!;
         },
         codec: SseCodec(
           decodeSuccessData: sse_decode_list_String,
@@ -1148,6 +1372,28 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     debugName: "split_evenly",
     argNames: ["amountMinor", "parts"],
   );
+
+  @override
+  List<TemplateView> crateApiRegisterTemplates() {
+    return handler.executeSync(
+      SyncTask(
+        callFfi: () {
+          final serializer = SseSerializer(generalizedFrbRustBinding);
+          return pdeCallFfi(generalizedFrbRustBinding, serializer, funcId: 36)!;
+        },
+        codec: SseCodec(
+          decodeSuccessData: sse_decode_list_template_view,
+          decodeErrorData: null,
+        ),
+        constMeta: kCrateApiRegisterTemplatesConstMeta,
+        argValues: [],
+        apiImpl: this,
+      ),
+    );
+  }
+
+  TaskConstMeta get kCrateApiRegisterTemplatesConstMeta =>
+      const TaskConstMeta(debugName: "templates", argNames: []);
 
   RustArcIncrementStrongCountFnType
   get rust_arc_increment_strong_count_Till => wire
@@ -1209,6 +1455,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  OwnerKit dco_decode_box_autoadd_owner_kit(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_owner_kit(raw);
+  }
+
+  @protected
+  SetupInput dco_decode_box_autoadd_setup_input(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return dco_decode_setup_input(raw);
+  }
+
+  @protected
   StaffView dco_decode_box_autoadd_staff_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_staff_view(raw);
@@ -1236,6 +1494,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       id: dco_decode_String(arr[0]),
       name: dco_decode_String(arr[1]),
       mode: dco_decode_String(arr[2]),
+    );
+  }
+
+  @protected
+  CurrencyView dco_decode_currency_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return CurrencyView(
+      code: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
     );
   }
 
@@ -1295,6 +1565,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<CurrencyView> dco_decode_list_currency_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_currency_view).toList();
+  }
+
+  @protected
   List<ItemView> dco_decode_list_item_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return (raw as List<dynamic>).map(dco_decode_item_view).toList();
@@ -1343,6 +1619,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<TemplateView> dco_decode_list_template_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return (raw as List<dynamic>).map(dco_decode_template_view).toList();
+  }
+
+  @protected
   String? dco_decode_opt_String(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_String(raw);
@@ -1358,6 +1640,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   OrderView? dco_decode_opt_box_autoadd_order_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_order_view(raw);
+  }
+
+  @protected
+  OwnerKit? dco_decode_opt_box_autoadd_owner_kit(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_owner_kit(raw);
   }
 
   @protected
@@ -1415,6 +1703,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  OwnerKit dco_decode_owner_kit(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 2)
+      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
+    return OwnerKit(
+      sealedOwnerKey: dco_decode_list_prim_u_8_strict(arr[0]),
+      recoveryCode: dco_decode_String(arr[1]),
+    );
+  }
+
+  @protected
   PeerSelfTest dco_decode_peer_self_test(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -1455,6 +1755,26 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SetupInput dco_decode_setup_input(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 10)
+      throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
+    return SetupInput(
+      businessName: dco_decode_String(arr[0]),
+      currency: dco_decode_String(arr[1]),
+      templateId: dco_decode_String(arr[2]),
+      sampleItems: dco_decode_bool(arr[3]),
+      taxName: dco_decode_opt_String(arr[4]),
+      taxPercent: dco_decode_String(arr[5]),
+      taxIncluded: dco_decode_bool(arr[6]),
+      ownerName: dco_decode_String(arr[7]),
+      ownerPin: dco_decode_String(arr[8]),
+      passphrase: dco_decode_String(arr[9]),
+    );
+  }
+
+  @protected
   ShiftView dco_decode_shift_view(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = raw as List<dynamic>;
@@ -1479,6 +1799,22 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       name: dco_decode_String(arr[1]),
       initials: dco_decode_String(arr[2]),
       role: dco_decode_String(arr[3]),
+    );
+  }
+
+  @protected
+  TemplateView dco_decode_template_view(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    final arr = raw as List<dynamic>;
+    if (arr.length != 6)
+      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
+    return TemplateView(
+      id: dco_decode_String(arr[0]),
+      name: dco_decode_String(arr[1]),
+      description: dco_decode_String(arr[2]),
+      areas: dco_decode_list_String(arr[3]),
+      itemCount: dco_decode_u_32(arr[4]),
+      demo: dco_decode_bool(arr[5]),
     );
   }
 
@@ -1574,6 +1910,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  OwnerKit sse_decode_box_autoadd_owner_kit(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_owner_kit(deserializer));
+  }
+
+  @protected
+  SetupInput sse_decode_box_autoadd_setup_input(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_setup_input(deserializer));
+  }
+
+  @protected
   StaffView sse_decode_box_autoadd_staff_view(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_staff_view(deserializer));
@@ -1594,6 +1942,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_name = sse_decode_String(deserializer);
     var var_mode = sse_decode_String(deserializer);
     return CenterView(id: var_id, name: var_name, mode: var_mode);
+  }
+
+  @protected
+  CurrencyView sse_decode_currency_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_code = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    return CurrencyView(code: var_code, name: var_name);
   }
 
   @protected
@@ -1664,6 +2020,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var ans_ = <CenterView>[];
     for (var idx_ = 0; idx_ < len_; ++idx_) {
       ans_.add(sse_decode_center_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
+  List<CurrencyView> sse_decode_list_currency_view(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <CurrencyView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_currency_view(deserializer));
     }
     return ans_;
   }
@@ -1759,6 +2129,20 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  List<TemplateView> sse_decode_list_template_view(
+    SseDeserializer deserializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    var len_ = sse_decode_i_32(deserializer);
+    var ans_ = <TemplateView>[];
+    for (var idx_ = 0; idx_ < len_; ++idx_) {
+      ans_.add(sse_decode_template_view(deserializer));
+    }
+    return ans_;
+  }
+
+  @protected
   String? sse_decode_opt_String(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -1788,6 +2172,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_order_view(deserializer));
+    } else {
+      return null;
+    }
+  }
+
+  @protected
+  OwnerKit? sse_decode_opt_box_autoadd_owner_kit(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_owner_kit(deserializer));
     } else {
       return null;
     }
@@ -1860,6 +2255,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  OwnerKit sse_decode_owner_kit(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_sealedOwnerKey = sse_decode_list_prim_u_8_strict(deserializer);
+    var var_recoveryCode = sse_decode_String(deserializer);
+    return OwnerKit(
+      sealedOwnerKey: var_sealedOwnerKey,
+      recoveryCode: var_recoveryCode,
+    );
+  }
+
+  @protected
   PeerSelfTest sse_decode_peer_self_test(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_sender = sse_decode_String(deserializer);
@@ -1904,6 +2310,33 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  SetupInput sse_decode_setup_input(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_businessName = sse_decode_String(deserializer);
+    var var_currency = sse_decode_String(deserializer);
+    var var_templateId = sse_decode_String(deserializer);
+    var var_sampleItems = sse_decode_bool(deserializer);
+    var var_taxName = sse_decode_opt_String(deserializer);
+    var var_taxPercent = sse_decode_String(deserializer);
+    var var_taxIncluded = sse_decode_bool(deserializer);
+    var var_ownerName = sse_decode_String(deserializer);
+    var var_ownerPin = sse_decode_String(deserializer);
+    var var_passphrase = sse_decode_String(deserializer);
+    return SetupInput(
+      businessName: var_businessName,
+      currency: var_currency,
+      templateId: var_templateId,
+      sampleItems: var_sampleItems,
+      taxName: var_taxName,
+      taxPercent: var_taxPercent,
+      taxIncluded: var_taxIncluded,
+      ownerName: var_ownerName,
+      ownerPin: var_ownerPin,
+      passphrase: var_passphrase,
+    );
+  }
+
+  @protected
   ShiftView sse_decode_shift_view(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_id = sse_decode_String(deserializer);
@@ -1930,6 +2363,25 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       name: var_name,
       initials: var_initials,
       role: var_role,
+    );
+  }
+
+  @protected
+  TemplateView sse_decode_template_view(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    var var_id = sse_decode_String(deserializer);
+    var var_name = sse_decode_String(deserializer);
+    var var_description = sse_decode_String(deserializer);
+    var var_areas = sse_decode_list_String(deserializer);
+    var var_itemCount = sse_decode_u_32(deserializer);
+    var var_demo = sse_decode_bool(deserializer);
+    return TemplateView(
+      id: var_id,
+      name: var_name,
+      description: var_description,
+      areas: var_areas,
+      itemCount: var_itemCount,
+      demo: var_demo,
     );
   }
 
@@ -2032,6 +2484,24 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_owner_kit(
+    OwnerKit self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_owner_kit(self, serializer);
+  }
+
+  @protected
+  void sse_encode_box_autoadd_setup_input(
+    SetupInput self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_setup_input(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_staff_view(
     StaffView self,
     SseSerializer serializer,
@@ -2053,6 +2523,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.id, serializer);
     sse_encode_String(self.name, serializer);
     sse_encode_String(self.mode, serializer);
+  }
+
+  @protected
+  void sse_encode_currency_view(CurrencyView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.code, serializer);
+    sse_encode_String(self.name, serializer);
   }
 
   @protected
@@ -2106,6 +2583,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_i_32(self.length, serializer);
     for (final item in self) {
       sse_encode_center_view(item, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_list_currency_view(
+    List<CurrencyView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_currency_view(item, serializer);
     }
   }
 
@@ -2204,6 +2693,18 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_list_template_view(
+    List<TemplateView> self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_i_32(self.length, serializer);
+    for (final item in self) {
+      sse_encode_template_view(item, serializer);
+    }
+  }
+
+  @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
 
@@ -2236,6 +2737,19 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_order_view(self, serializer);
+    }
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_owner_kit(
+    OwnerKit? self,
+    SseSerializer serializer,
+  ) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_owner_kit(self, serializer);
     }
   }
 
@@ -2289,6 +2803,13 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_owner_kit(OwnerKit self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_list_prim_u_8_strict(self.sealedOwnerKey, serializer);
+    sse_encode_String(self.recoveryCode, serializer);
+  }
+
+  @protected
   void sse_encode_peer_self_test(PeerSelfTest self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.sender, serializer);
@@ -2319,6 +2840,21 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_setup_input(SetupInput self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.businessName, serializer);
+    sse_encode_String(self.currency, serializer);
+    sse_encode_String(self.templateId, serializer);
+    sse_encode_bool(self.sampleItems, serializer);
+    sse_encode_opt_String(self.taxName, serializer);
+    sse_encode_String(self.taxPercent, serializer);
+    sse_encode_bool(self.taxIncluded, serializer);
+    sse_encode_String(self.ownerName, serializer);
+    sse_encode_String(self.ownerPin, serializer);
+    sse_encode_String(self.passphrase, serializer);
+  }
+
+  @protected
   void sse_encode_shift_view(ShiftView self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_String(self.id, serializer);
@@ -2334,6 +2870,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_String(self.name, serializer);
     sse_encode_String(self.initials, serializer);
     sse_encode_String(self.role, serializer);
+  }
+
+  @protected
+  void sse_encode_template_view(TemplateView self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_String(self.id, serializer);
+    sse_encode_String(self.name, serializer);
+    sse_encode_String(self.description, serializer);
+    sse_encode_list_String(self.areas, serializer);
+    sse_encode_u_32(self.itemCount, serializer);
+    sse_encode_bool(self.demo, serializer);
   }
 
   @protected
@@ -2461,6 +3008,17 @@ class TillImpl extends RustOpaque implements Till {
     givenMinor: givenMinor,
   );
 
+  /// Shows the recovery code again, given the sealed key and passphrase
+  /// (e.g. if the app closed before the owner wrote it down).
+  Future<String> recoveryCode({
+    required List<int> sealedOwnerKey,
+    required String passphrase,
+  }) => RustLib.instance.api.crateApiRegisterTillRecoveryCode(
+    that: this,
+    sealedOwnerKey: sealedOwnerKey,
+    passphrase: passphrase,
+  );
+
   ReportView report() =>
       RustLib.instance.api.crateApiRegisterTillReport(that: this);
 
@@ -2498,6 +3056,11 @@ class TillImpl extends RustOpaque implements Till {
 
   List<StaffView> staff() =>
       RustLib.instance.api.crateApiRegisterTillStaff(that: this);
+
+  /// The owner kit from [`Till::create`], once. Store the sealed key and
+  /// show the recovery code.
+  OwnerKit? takeOwnerKit() =>
+      RustLib.instance.api.crateApiRegisterTillTakeOwnerKit(that: this);
 
   bool training() =>
       RustLib.instance.api.crateApiRegisterTillTraining(that: this);

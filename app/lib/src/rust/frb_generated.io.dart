@@ -56,6 +56,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OrderView dco_decode_box_autoadd_order_view(dynamic raw);
 
   @protected
+  OwnerKit dco_decode_box_autoadd_owner_kit(dynamic raw);
+
+  @protected
+  SetupInput dco_decode_box_autoadd_setup_input(dynamic raw);
+
+  @protected
   StaffView dco_decode_box_autoadd_staff_view(dynamic raw);
 
   @protected
@@ -63,6 +69,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CenterView dco_decode_center_view(dynamic raw);
+
+  @protected
+  CurrencyView dco_decode_currency_view(dynamic raw);
 
   @protected
   int dco_decode_i_32(dynamic raw);
@@ -81,6 +90,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<CenterView> dco_decode_list_center_view(dynamic raw);
+
+  @protected
+  List<CurrencyView> dco_decode_list_currency_view(dynamic raw);
 
   @protected
   List<ItemView> dco_decode_list_item_view(dynamic raw);
@@ -107,6 +119,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<StaffView> dco_decode_list_staff_view(dynamic raw);
 
   @protected
+  List<TemplateView> dco_decode_list_template_view(dynamic raw);
+
+  @protected
   String? dco_decode_opt_String(dynamic raw);
 
   @protected
@@ -114,6 +129,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   OrderView? dco_decode_opt_box_autoadd_order_view(dynamic raw);
+
+  @protected
+  OwnerKit? dco_decode_opt_box_autoadd_owner_kit(dynamic raw);
 
   @protected
   StaffView? dco_decode_opt_box_autoadd_staff_view(dynamic raw);
@@ -128,6 +146,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OrderView dco_decode_order_view(dynamic raw);
 
   @protected
+  OwnerKit dco_decode_owner_kit(dynamic raw);
+
+  @protected
   PeerSelfTest dco_decode_peer_self_test(dynamic raw);
 
   @protected
@@ -137,10 +158,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ReportView dco_decode_report_view(dynamic raw);
 
   @protected
+  SetupInput dco_decode_setup_input(dynamic raw);
+
+  @protected
   ShiftView dco_decode_shift_view(dynamic raw);
 
   @protected
   StaffView dco_decode_staff_view(dynamic raw);
+
+  @protected
+  TemplateView dco_decode_template_view(dynamic raw);
 
   @protected
   int dco_decode_u_32(dynamic raw);
@@ -188,6 +215,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OrderView sse_decode_box_autoadd_order_view(SseDeserializer deserializer);
 
   @protected
+  OwnerKit sse_decode_box_autoadd_owner_kit(SseDeserializer deserializer);
+
+  @protected
+  SetupInput sse_decode_box_autoadd_setup_input(SseDeserializer deserializer);
+
+  @protected
   StaffView sse_decode_box_autoadd_staff_view(SseDeserializer deserializer);
 
   @protected
@@ -195,6 +228,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   CenterView sse_decode_center_view(SseDeserializer deserializer);
+
+  @protected
+  CurrencyView sse_decode_currency_view(SseDeserializer deserializer);
 
   @protected
   int sse_decode_i_32(SseDeserializer deserializer);
@@ -213,6 +249,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   List<CenterView> sse_decode_list_center_view(SseDeserializer deserializer);
+
+  @protected
+  List<CurrencyView> sse_decode_list_currency_view(
+    SseDeserializer deserializer,
+  );
 
   @protected
   List<ItemView> sse_decode_list_item_view(SseDeserializer deserializer);
@@ -243,6 +284,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<StaffView> sse_decode_list_staff_view(SseDeserializer deserializer);
 
   @protected
+  List<TemplateView> sse_decode_list_template_view(
+    SseDeserializer deserializer,
+  );
+
+  @protected
   String? sse_decode_opt_String(SseDeserializer deserializer);
 
   @protected
@@ -252,6 +298,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OrderView? sse_decode_opt_box_autoadd_order_view(
     SseDeserializer deserializer,
   );
+
+  @protected
+  OwnerKit? sse_decode_opt_box_autoadd_owner_kit(SseDeserializer deserializer);
 
   @protected
   StaffView? sse_decode_opt_box_autoadd_staff_view(
@@ -268,6 +317,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   OrderView sse_decode_order_view(SseDeserializer deserializer);
 
   @protected
+  OwnerKit sse_decode_owner_kit(SseDeserializer deserializer);
+
+  @protected
   PeerSelfTest sse_decode_peer_self_test(SseDeserializer deserializer);
 
   @protected
@@ -279,10 +331,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ReportView sse_decode_report_view(SseDeserializer deserializer);
 
   @protected
+  SetupInput sse_decode_setup_input(SseDeserializer deserializer);
+
+  @protected
   ShiftView sse_decode_shift_view(SseDeserializer deserializer);
 
   @protected
   StaffView sse_decode_staff_view(SseDeserializer deserializer);
+
+  @protected
+  TemplateView sse_decode_template_view(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_32(SseDeserializer deserializer);
@@ -339,6 +397,18 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_box_autoadd_owner_kit(
+    OwnerKit self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_box_autoadd_setup_input(
+    SetupInput self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_box_autoadd_staff_view(
     StaffView self,
     SseSerializer serializer,
@@ -349,6 +419,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_center_view(CenterView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_currency_view(CurrencyView self, SseSerializer serializer);
 
   @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
@@ -368,6 +441,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_list_center_view(
     List<CenterView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_list_currency_view(
+    List<CurrencyView> self,
     SseSerializer serializer,
   );
 
@@ -411,6 +490,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  void sse_encode_list_template_view(
+    List<TemplateView> self,
+    SseSerializer serializer,
+  );
+
+  @protected
   void sse_encode_opt_String(String? self, SseSerializer serializer);
 
   @protected
@@ -422,6 +507,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_opt_box_autoadd_order_view(
     OrderView? self,
+    SseSerializer serializer,
+  );
+
+  @protected
+  void sse_encode_opt_box_autoadd_owner_kit(
+    OwnerKit? self,
     SseSerializer serializer,
   );
 
@@ -444,6 +535,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_order_view(OrderView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_owner_kit(OwnerKit self, SseSerializer serializer);
+
+  @protected
   void sse_encode_peer_self_test(PeerSelfTest self, SseSerializer serializer);
 
   @protected
@@ -456,10 +550,16 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_report_view(ReportView self, SseSerializer serializer);
 
   @protected
+  void sse_encode_setup_input(SetupInput self, SseSerializer serializer);
+
+  @protected
   void sse_encode_shift_view(ShiftView self, SseSerializer serializer);
 
   @protected
   void sse_encode_staff_view(StaffView self, SseSerializer serializer);
+
+  @protected
+  void sse_encode_template_view(TemplateView self, SseSerializer serializer);
 
   @protected
   void sse_encode_u_32(int self, SseSerializer serializer);
