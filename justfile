@@ -28,6 +28,7 @@ tokens:
 # Regenerate the Rust <-> Dart bindings after changing crates/pos-core-ffi/src/api
 bridge:
     cd app && flutter_rust_bridge_codegen generate
+    cargo fmt --all
 
 # Run the M0 proof on a platform: just proof macos | windows | linux | <android-device-id>
 proof platform:
