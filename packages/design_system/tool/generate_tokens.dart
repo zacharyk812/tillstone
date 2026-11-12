@@ -17,6 +17,14 @@ void main(List<String> args) {
     ..writeln("import 'dart:ui' show Color, FontWeight;")
     ..writeln();
 
+  final brand = tokens['brand'] as Map<String, dynamic>;
+  out
+    ..writeln('/// The product as people see it. Forks rename it in tokens.json.')
+    ..writeln('abstract final class PosBrandInfo {')
+    ..writeln('  static const name = ${_dartString(brand['name'] as String)};')
+    ..writeln('}')
+    ..writeln();
+
   final colors = tokens['color'] as Map<String, dynamic>;
   final light = colors['light'] as Map<String, dynamic>;
   out
@@ -105,3 +113,7 @@ void main(List<String> args) {
   target.writeAsStringSync(generated);
   stdout.writeln('Wrote ${target.path}');
 }
+
+/// A single-quoted Dart string literal.
+String _dartString(String s) =>
+    "'${s.replaceAll('\\', '\\\\').replaceAll("'", "\\'").replaceAll('\$', '\\\$')}'";

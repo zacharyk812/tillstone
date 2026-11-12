@@ -194,7 +194,7 @@ class PosTopBar extends StatelessWidget {
   }
 }
 
-/// Tillstone's mark and name.
+/// The product's mark and name (from tokens.json, so forks can rebrand).
 class PosBrand extends StatelessWidget {
   const PosBrand({super.key});
 
@@ -218,7 +218,10 @@ class PosBrand extends StatelessWidget {
           ),
         ),
         const SizedBox(width: PosSpacing.sm),
-        Text('Tillstone', style: _text(context, PosType.title).copyWith(fontSize: 18, fontWeight: FontWeight.w700)),
+        Text(
+          PosBrandInfo.name,
+          style: _text(context, PosType.title).copyWith(fontSize: 18, fontWeight: FontWeight.w700),
+        ),
       ],
     );
   }

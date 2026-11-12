@@ -21,7 +21,7 @@ class TillstoneApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tillstone',
+      title: PosBrandInfo.name,
       debugShowCheckedModeBanner: false,
       theme: PosTheme.light(),
       darkTheme: PosTheme.dark(),
@@ -75,7 +75,7 @@ class _ProofScreenState extends State<ProofScreen> {
         child: ListView(
           padding: const EdgeInsets.all(PosSpacing.lg),
           children: [
-            Text('Tillstone', style: Theme.of(context).textTheme.headlineMedium),
+            Text(PosBrandInfo.name, style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: PosSpacing.xs),
             Text('Core ${coreVersion()} · M0 proof'),
             const SizedBox(height: PosSpacing.lg),

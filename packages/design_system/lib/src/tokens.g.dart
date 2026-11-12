@@ -3,6 +3,11 @@
 
 import 'dart:ui' show Color, FontWeight;
 
+/// The product as people see it. Forks rename it in tokens.json.
+abstract final class PosBrandInfo {
+  static const name = 'Tillstone';
+}
+
 /// Colors for one theme.
 class PosColors {
   const PosColors({
