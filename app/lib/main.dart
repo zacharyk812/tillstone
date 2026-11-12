@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:tillstone_design_system/tillstone_design_system.dart';
 
+import 'screens/gallery.dart';
 import 'src/background_service.dart';
 import 'src/rust/api/core.dart';
 import 'src/rust/frb_generated.dart';
@@ -13,7 +14,9 @@ Future<void> main() async {
 }
 
 class TillstoneApp extends StatelessWidget {
-  const TillstoneApp({super.key});
+  const TillstoneApp({super.key, this.home = const ScreenGallery()});
+
+  final Widget home;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,7 @@ class TillstoneApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: PosTheme.light(),
       darkTheme: PosTheme.dark(),
-      home: const ProofScreen(),
+      home: home,
     );
   }
 }
@@ -54,7 +57,8 @@ class _ProofScreenState extends State<ProofScreen> {
     setState(() => _running = true);
     try {
       final r = await peerSelfTest();
-      _peerResult = 'Device ${r.sender} → ${r.receiver}: "${r.message}" '
+      _peerResult =
+          'Device ${r.sender} → ${r.receiver}: "${r.message}" '
           'in ${r.roundTripMs} ms. '
           'Outsider refused: ${r.outsiderRefused ? 'yes' : 'NO'}';
     } catch (e) {
