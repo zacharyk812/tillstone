@@ -247,18 +247,46 @@ pub struct CheckLeaseReleased {
     pub order: OrderId,
 }
 
+/// A full copy of a line, carried by splits and merges so that every order
+/// can be rebuilt from its own events alone.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct LineSnapshot {
+    pub line: LineId,
+    pub item: ItemId,
+    pub variant: Option<VariantId>,
+    pub name: String,
+    pub revenue_center: RevenueCenterId,
+    pub quantity: i64,
+    pub unit_price: Money,
+    pub modifiers: Vec<ModifierSnapshot>,
+    pub taxes: Vec<TaxRate>,
+    pub discounts: Vec<DiscountSnapshot>,
+    pub seat: Option<u8>,
+    pub course: Option<u8>,
+    pub sent: bool,
+    pub track_stock: bool,
+}
+
+/// Moves lines to a new order (split by seat, item or evenly by item).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OrderSplit {
     pub from: OrderId,
     pub to: OrderId,
     pub number: String,
-    pub lines: Vec<LineId>,
+    pub revenue_center: RevenueCenterId,
+    pub currency: Currency,
+    pub pricing_rules: PricingRules,
+    pub fulfillment: Fulfillment,
+    pub table: Option<TableId>,
+    pub lines: Vec<LineSnapshot>,
 }
 
+/// Moves every line of `from` into `into`; `from` ends as merged.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct OrderMerged {
     pub from: OrderId,
     pub into: OrderId,
+    pub lines: Vec<LineSnapshot>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -490,6 +518,15 @@ fn decode<T: DeserializeOwned>(bytes: &[u8]) -> Result<T, DecodeError> {
 }
 
 impl Event {
+    /// Every order this event affects (splits and merges affect two).
+    pub fn orders(&self) -> Vec<OrderId> {
+        match self {
+            Self::OrderSplit(e) => vec![e.from, e.to],
+            Self::OrderMerged(e) => vec![e.from, e.into],
+            other => other.order().into_iter().collect(),
+        }
+    }
+
     /// The order this event belongs to, if any.
     pub fn order(&self) -> Option<OrderId> {
         Some(match self {
