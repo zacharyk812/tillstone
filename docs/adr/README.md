@@ -8,3 +8,5 @@ Each significant design decision is recorded here as a short, numbered document,
 | # | Decision | Status |
 |---|---|---|
 | [0001](0001-record-architecture-decisions.md) | Record architecture decisions | Accepted |
+| [0002](0002-flutter-ui-with-rust-core.md) | Flutter UI with a Rust core, bridged by flutter_rust_bridge | Accepted |
+| [0003](0003-iroh-for-peer-to-peer.md) | iroh for peer-to-peer networking | Accepted |

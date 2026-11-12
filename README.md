@@ -4,7 +4,7 @@
 
 Tillstone is designed to be secure, fast, robust and simple. It runs the same on every platform, works fully offline, and needs no server: start with one register, add another, and they find each other and sync.
 
-> **Status: planning.** There's no usable software yet. The design is in [`docs/PLAN.md`](docs/PLAN.md), and the work is tracked as milestones there. Until 1.0, treat everything as beta and don't run a real business on it.
+> **Status: M0 (foundations).** There's no usable point of sale yet. The design is in [`docs/PLAN.md`](docs/PLAN.md); the first technical proofs are in [`docs/m0-proofs.md`](docs/m0-proofs.md). Until 1.0, treat everything as beta and don't run a real business on it.
 
 ## Goals
 
@@ -28,6 +28,19 @@ Tillstone is designed to be secure, fast, robust and simple. It runs the same on
 | First payment provider | Stripe Terminal smart readers |
 
 The reasoning for each choice is in the [plan](docs/PLAN.md) and in [decision records](docs/adr/).
+
+## Repository layout
+
+| Path | What |
+|---|---|
+| `app/` | Flutter app (all platforms and device roles) |
+| `crates/pos-core` | Money, pricing, events and the ledger |
+| `crates/pos-sync` | Peer-to-peer messaging and sync |
+| `crates/pos-core-ffi` | Bridge between the app and the Rust crates |
+| `packages/design_system` | Design tokens and components |
+| `tokens/tokens.json` | The single source of design tokens |
+| `countries/` | Country presets |
+| `docs/` | Plan, decision records, proofs |
 
 ## Contributing
 

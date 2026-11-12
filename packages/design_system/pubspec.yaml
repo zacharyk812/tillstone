@@ -1,0 +1,18 @@
+name: tillstone_design_system
+description: Tillstone's design tokens and components. Every pixel of the app comes from here.
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  material_ui: ^1.11.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
