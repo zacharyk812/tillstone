@@ -9,6 +9,22 @@ Thanks for your interest. Tillstone is in the planning stage, so the most useful
 - For anything bigger than a small fix, open an issue first so we can agree on the approach.
 - Significant design decisions get a decision record in [`docs/adr/`](docs/adr/).
 
+## Development setup
+
+You need:
+- [Rust](https://rustup.rs) (stable)
+- [Flutter](https://docs.flutter.dev/get-started/install) 3.50 or newer
+- For macOS builds: Xcode and CocoaPods. For Android: the Android SDK and NDK (Android Studio installs them). For Linux desktop: `clang cmake ninja-build pkg-config libgtk-3-dev`.
+- Optional: [`just`](https://just.systems) for the shortcuts in the `justfile`, and `flutter_rust_bridge_codegen` (`cargo install flutter_rust_bridge_codegen --version 2.13.0`) if you change the Rust API used by the app.
+
+Then:
+
+```sh
+just setup          # or run the commands in the justfile by hand
+just check          # Rust and design-system checks
+just proof macos    # run the app proof on your platform
+```
+
 ## Commit messages
 
 Tillstone uses [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/). Every commit message must start with a type, an optional scope, and a short summary:
