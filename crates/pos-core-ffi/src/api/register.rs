@@ -38,7 +38,8 @@ pub(crate) fn format_money(m: Money) -> String {
         grouped.push(ch);
     }
     let whole: String = grouped.chars().rev().collect();
-    let number = if exp == 0 { whole } else { format!("{whole}.{:0w$}", abs % scale, w = exp as usize) };
+    let number =
+        if exp == 0 { whole } else { format!("{whole}.{:0w$}", abs % scale, w = exp as usize) };
     let sign = if m.minor() < 0 { "−" } else { "" };
     match symbol {
         Some(s) => format!("{sign}{s}{number}"),
@@ -134,7 +135,11 @@ pub struct ReportView {
 }
 
 fn initials(name: &str) -> String {
-    name.split_whitespace().filter_map(|w| w.chars().next()).take(2).collect::<String>().to_uppercase()
+    name.split_whitespace()
+        .filter_map(|w| w.chars().next())
+        .take(2)
+        .collect::<String>()
+        .to_uppercase()
 }
 
 /// One register, open on this device.
@@ -160,9 +165,16 @@ impl Till {
         device_secret: Vec<u8>,
         owner_secret: Vec<u8>,
     ) -> Result<Till, String> {
-        let key = |v: Vec<u8>| <[u8; 32]>::try_from(v).map_err(|_| "keys must be 32 bytes".to_string());
-        let mut reg = Register::create(&db_path, &key(db_key)?, &key(device_secret)?, &key(owner_secret)?, demo::setup())
-            .map_err(err)?;
+        let key =
+            |v: Vec<u8>| <[u8; 32]>::try_from(v).map_err(|_| "keys must be 32 bytes".to_string());
+        let mut reg = Register::create(
+            &db_path,
+            &key(db_key)?,
+            &key(device_secret)?,
+            &key(owner_secret)?,
+            demo::setup(),
+        )
+        .map_err(err)?;
         demo::seed(&mut reg).map_err(err)?;
         reg.sign_out();
         Ok(Till { reg: Mutex::new(reg) })
@@ -170,8 +182,11 @@ impl Till {
 
     /// Opens the register stored at `db_path`.
     pub fn open(db_path: String, db_key: Vec<u8>, device_secret: Vec<u8>) -> Result<Till, String> {
-        let key = |v: Vec<u8>| <[u8; 32]>::try_from(v).map_err(|_| "keys must be 32 bytes".to_string());
-        Register::open(&db_path, &key(db_key)?, &key(device_secret)?).map(|reg| Till { reg: Mutex::new(reg) }).map_err(err)
+        let key =
+            |v: Vec<u8>| <[u8; 32]>::try_from(v).map_err(|_| "keys must be 32 bytes".to_string());
+        Register::open(&db_path, &key(db_key)?, &key(device_secret)?)
+            .map(|reg| Till { reg: Mutex::new(reg) })
+            .map_err(err)
     }
 
     #[frb(sync)]
@@ -181,7 +196,10 @@ impl Till {
 
     #[frb(sync)]
     pub fn demo_pins(&self) -> Vec<(String, String)> {
-        vec![("Alex (owner)".into(), demo::DEMO_OWNER_PIN.into()), ("Maya (cashier)".into(), demo::DEMO_CASHIER_PIN.into())]
+        vec![
+            ("Alex (owner)".into(), demo::DEMO_OWNER_PIN.into()),
+            ("Maya (cashier)".into(), demo::DEMO_CASHIER_PIN.into()),
+        ]
     }
 
     #[frb(sync)]
@@ -189,7 +207,12 @@ impl Till {
         self.r()
             .staff_list()
             .into_iter()
-            .map(|(id, name)| StaffView { id: id.to_string(), initials: initials(&name), name, role: String::new() })
+            .map(|(id, name)| StaffView {
+                id: id.to_string(),
+                initials: initials(&name),
+                name,
+                role: String::new(),
+            })
             .collect()
     }
 
@@ -200,7 +223,12 @@ impl Till {
             None => self.r().sign_in(&pin),
         }
         .map_err(err)?;
-        Ok(StaffView { id: signed.id.to_string(), initials: initials(&signed.name), name: signed.name, role: signed.role })
+        Ok(StaffView {
+            id: signed.id.to_string(),
+            initials: initials(&signed.name),
+            name: signed.name,
+            role: signed.role,
+        })
     }
 
     #[frb(sync)]
@@ -210,7 +238,12 @@ impl Till {
 
     #[frb(sync)]
     pub fn signed_in(&self) -> Option<StaffView> {
-        self.r().signed_in().map(|s| StaffView { id: s.id.to_string(), initials: initials(&s.name), name: s.name, role: s.role })
+        self.r().signed_in().map(|s| StaffView {
+            id: s.id.to_string(),
+            initials: initials(&s.name),
+            name: s.name,
+            role: s.role,
+        })
     }
 
     #[frb(sync)]
@@ -256,7 +289,11 @@ impl Till {
                 variants: i
                     .variants
                     .iter()
-                    .map(|v| OptionView { id: v.id.to_string(), name: v.name.clone(), price: format_money(v.price) })
+                    .map(|v| OptionView {
+                        id: v.id.to_string(),
+                        name: v.name.clone(),
+                        price: format_money(v.price),
+                    })
                     .collect(),
                 option_groups: i
                     .modifier_groups
@@ -269,7 +306,11 @@ impl Till {
                         options: g
                             .modifiers
                             .iter()
-                            .map(|m| OptionView { id: m.id.to_string(), name: m.name.clone(), price: format_money(m.price) })
+                            .map(|m| OptionView {
+                                id: m.id.to_string(),
+                                name: m.name.clone(),
+                                price: format_money(m.price),
+                            })
                             .collect(),
                     })
                     .collect(),
@@ -284,7 +325,10 @@ impl Till {
             "pickup" => Fulfillment::Pickup,
             _ => Fulfillment::Here,
         };
-        self.r().open_order(parse(&center_id, RevenueCenterId)?, f).map(|id| id.to_string()).map_err(err)
+        self.r()
+            .open_order(parse(&center_id, RevenueCenterId)?, f)
+            .map(|id| id.to_string())
+            .map_err(err)
     }
 
     pub fn add_item(
@@ -296,19 +340,46 @@ impl Till {
         quantity: i64,
     ) -> Result<String, String> {
         let variant = variant_id.map(|v| parse(&v, VariantId)).transpose()?;
-        let options = option_ids.iter().map(|o| parse(o, ModifierId)).collect::<Result<Vec<_>, _>>()?;
+        let options =
+            option_ids.iter().map(|o| parse(o, ModifierId)).collect::<Result<Vec<_>, _>>()?;
         self.r()
-            .add_item(parse(&order_id, OrderId)?, parse(&item_id, ItemId)?, variant, &options, quantity)
+            .add_item(
+                parse(&order_id, OrderId)?,
+                parse(&item_id, ItemId)?,
+                variant,
+                &options,
+                quantity,
+            )
             .map(|id| id.to_string())
             .map_err(err)
     }
 
-    pub fn set_quantity(&self, order_id: String, line_id: String, quantity: i64) -> Result<(), String> {
-        self.r().set_quantity(parse(&order_id, OrderId)?, parse(&line_id, LineId)?, quantity).map_err(err)
+    pub fn set_quantity(
+        &self,
+        order_id: String,
+        line_id: String,
+        quantity: i64,
+    ) -> Result<(), String> {
+        self.r()
+            .set_quantity(parse(&order_id, OrderId)?, parse(&line_id, LineId)?, quantity)
+            .map_err(err)
     }
 
-    pub fn discount(&self, order_id: String, name: String, basis_points: i32, approver_pin: Option<String>) -> Result<(), String> {
-        self.r().discount_order(parse(&order_id, OrderId)?, &name, basis_points, approver_pin.as_deref()).map_err(err)
+    pub fn discount(
+        &self,
+        order_id: String,
+        name: String,
+        basis_points: i32,
+        approver_pin: Option<String>,
+    ) -> Result<(), String> {
+        self.r()
+            .discount_order(
+                parse(&order_id, OrderId)?,
+                &name,
+                basis_points,
+                approver_pin.as_deref(),
+            )
+            .map_err(err)
     }
 
     pub fn send(&self, order_id: String) -> Result<(), String> {
@@ -341,7 +412,13 @@ impl Till {
                     .snapshot
                     .modifiers
                     .iter()
-                    .map(|m| if m.price.minor() == 0 { m.name.clone() } else { format!("{} +{}", m.name, format_money(m.price)) })
+                    .map(|m| {
+                        if m.price.minor() == 0 {
+                            m.name.clone()
+                        } else {
+                            format!("{} +{}", m.name, format_money(m.price))
+                        }
+                    })
                     .collect(),
                 amount: format_money(lt.gross),
             })
@@ -351,14 +428,19 @@ impl Till {
             number: o.number.clone(),
             lines,
             subtotal: format_money(t.gross),
-            discount: (t.discount.minor() != 0).then(|| format_money(Money::from_minor(-t.discount.minor(), t.discount.currency()))),
+            discount: (t.discount.minor() != 0).then(|| {
+                format_money(Money::from_minor(-t.discount.minor(), t.discount.currency()))
+            }),
             taxes: t
                 .taxes
                 .iter()
                 .map(|x| {
                     let pct = format!("{}.{:02}", x.rate_bp / 100, x.rate_bp % 100);
                     let pct = pct.trim_end_matches('0').trim_end_matches('.').to_string();
-                    (format!("{} {pct}%{}", x.name, if x.inclusive { " (incl.)" } else { "" }), format_money(x.amount))
+                    (
+                        format!("{} {pct}%{}", x.name, if x.inclusive { " (incl.)" } else { "" }),
+                        format_money(x.amount),
+                    )
                 })
                 .collect(),
             total: format_money(t.total),

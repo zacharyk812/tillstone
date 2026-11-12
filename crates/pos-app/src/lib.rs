@@ -392,8 +392,14 @@ impl Register {
 
     /// Active staff, by name, for a "tap your name" sign-in screen.
     pub fn staff_list(&self) -> Vec<(StaffId, String)> {
-        let mut v: Vec<(StaffId, String)> =
-            self.book.config().staff.values().filter(|s| s.active).map(|s| (s.id, s.name.clone())).collect();
+        let mut v: Vec<(StaffId, String)> = self
+            .book
+            .config()
+            .staff
+            .values()
+            .filter(|s| s.active)
+            .map(|s| (s.id, s.name.clone()))
+            .collect();
         v.sort_by(|a, b| a.1.cmp(&b.1));
         v
     }
