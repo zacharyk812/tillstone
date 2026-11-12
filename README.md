@@ -4,7 +4,7 @@
 
 Tillstone is designed to be secure, fast, robust and simple. It runs the same on every platform, works fully offline, and needs no server: start with one register, add another, and they find each other and sync.
 
-> **Status: M1 and M2 (screen designs and core engine).** There's no usable point of sale yet. The design is in [`docs/PLAN.md`](docs/PLAN.md); screen designs are in [`docs/design.md`](docs/design.md); the first technical proofs are in [`docs/m0-proofs.md`](docs/m0-proofs.md). Until 1.0, treat everything as beta and don't run a real business on it.
+> **Status: M3 in progress (single register).** You can set up a business or try the demo, sign in with a PIN, ring up sales and take cash on one device. Printing, shifts and Manage are next. The design is in [`docs/PLAN.md`](docs/PLAN.md); screen designs are in [`docs/design.md`](docs/design.md). Until 1.0, treat everything as beta and don't run a real business on it.
 
 ## Goals
 
@@ -16,6 +16,7 @@ Tillstone is designed to be secure, fast, robust and simple. It runs the same on
 - **Never touches card data.** Card payments go through certified smart card readers from a payment provider the business chooses.
 - **Identical UI everywhere.** Android, Windows, Linux and macOS through 1.0; iPad and iPhone after.
 - **Private.** No telemetry. Businesses own all of their data.
+- **Yours to fork.** Rebrand it, add your own business templates, or add drivers and events, and keep pulling upstream updates. See [Customizing Tillstone](docs/customizing.md).
 
 ## Technology
 
@@ -37,9 +38,11 @@ The reasoning for each choice is in the [plan](docs/PLAN.md) and in [decision re
 | `crates/pos-core` | Money, pricing, events and the ledger |
 | `crates/pos-sync` | Peer-to-peer messaging and sync |
 | `crates/pos-store` | Encrypted local storage (SQLCipher) |
+| `crates/pos-app` | Register services: setup, sign-in, orders, payments, shifts |
 | `crates/pos-core-ffi` | Bridge between the app and the Rust crates |
 | `packages/design_system` | Design tokens and components |
-| `tokens/tokens.json` | The single source of design tokens |
+| `tokens/tokens.json` | Brand name and design tokens |
+| `templates/` | Business templates for the setup wizard, and the demo |
 | `countries/` | Country presets |
 | `docs/` | Plan, decision records, proofs |
 
