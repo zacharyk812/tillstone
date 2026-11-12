@@ -90,7 +90,10 @@ jobs:
           # The default GitHub reporter miscounts integration tests on Linux
           # (reports "0 tests" after a pass), so use the expanded reporter.
           if [ "${{ matrix.platform }}" = linux ]; then
-            xvfb-run -a flutter test integration_test -d linux --reporter expanded
+            # On failure, rerun verbosely so the app's own output (e.g. a Rust
+            # panic) appears in the log.
+            xvfb-run -a flutter test integration_test -d linux --reporter expanded \
+              || { RUST_BACKTRACE=1 xvfb-run -a flutter test integration_test -d linux --reporter expanded -v 2>&1 | tail -n 300; exit 1; }
           else
             flutter test integration_test -d ${{ matrix.platform }} --reporter expanded
           fi
