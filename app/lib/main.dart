@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:tillstone_design_system/tillstone_design_system.dart';
 
-import 'screens/gallery.dart';
+import 'live/start.dart';
 import 'src/background_service.dart';
 import 'src/rust/api/core.dart';
 import 'src/rust/frb_generated.dart';
@@ -14,7 +14,7 @@ Future<void> main() async {
 }
 
 class TillstoneApp extends StatelessWidget {
-  const TillstoneApp({super.key, this.home = const ScreenGallery()});
+  const TillstoneApp({super.key, this.home = const StartGate()});
 
   final Widget home;
 

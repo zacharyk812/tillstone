@@ -10,7 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_rust_bridge: 2.13.0
+  flutter_secure_storage: ^11.2.0
   material_ui: ^1.11.0
+  path_provider: ^2.1.6
   tillstone_design_system:
     path: ../packages/design_system
   tillstone_ffi:
