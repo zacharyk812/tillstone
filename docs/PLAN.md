@@ -141,7 +141,7 @@ The **management back office is part of the same app** (a permission-gated Manag
 
 ### Personal data (mutable, deletable, never in events)
 - **Customers** and any contact details live in separate records, **each encrypted with its own key**. Events refer to them by ID only.
-- Deleting a customer deletes their key on every peer, which makes their data unreadable everywhere, including in old backups ("crypto-shredding"). This is how a permanent log stays compatible with GDPR/CCPA deletion rights.
+- Deleting a customer deletes their key and data on every peer (a `CustomerErased` event tells peers to do so). Backups taken before the deletion still hold the key until they expire, so backup retention must be finite. This is how a permanent log stays compatible with GDPR/CCPA deletion rights (ADR 0004).
 - Staff names are configuration, not events; events carry `staff_id`.
 
 ### Events (append-only, per device)
@@ -265,9 +265,9 @@ Devices may run different versions during upgrades, and configuration arrives wi
 ### Conflict rules
 | Data | Rule |
 |---|---|
-| **Configuration** | Each field change is ordered by hybrid logical clock; latest per field wins, ties broken by device ID. Deletes are tombstones. A same-field clash shows "changed on another device". |
+| **Configuration** | Each change replaces a whole record (an item, a tax, a staff member) and is ordered by hybrid logical clock; the latest change to a record wins, ties broken by device ID. Deletes are tombstones. Per-field merging can be added later if real conflicts show up (ADR 0004). |
 | **Shared checks: adding items** | Anyone with access can add lines; each line has its own ID, so concurrent additions simply combine. Removals and voids target a specific line. |
-| **Shared checks: restructuring** | Splitting, merging, transferring, taking payment and closing **require the check lease**. A device takes the lease with a live request to reachable peers and records `CheckLeaseTaken`. The lease is released on finish or after 2 minutes idle. **If peers can't be reached, only the device that opened the check may restructure it.** Lines added during a split go to the original check, never into the split-off ones. |
+| **Shared checks: restructuring** | Any device may take the lease when no other device holds it unexpired. Splitting, merging, transferring, taking payment and closing **require the check lease**. A device takes the lease with a live request to reachable peers and records `CheckLeaseTaken`. The lease is released on finish or after 2 minutes idle. **If peers can't be reached, only the device that opened the check may restructure it.** Lines added during a split go to the original check, never into the split-off ones. |
 | **Two payments at once** | Prevented by the lease. If it still happens (e.g. a network split), both payments are kept, the check shows as overpaid, and a refund of the extra is prompted. Money is never discarded. |
 | **Stock** | A sum of changes, which merges exactly. Can go below zero; flagged in reports. |
 | **Order and receipt numbers** | Device-prefixed (`A-0142`), gap-free per device. Short pickup numbers (`A42`). |
