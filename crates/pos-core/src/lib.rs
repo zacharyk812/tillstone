@@ -5,12 +5,14 @@
 
 #![forbid(unsafe_code)]
 
+pub mod book;
 pub mod catalog;
 pub mod events;
 pub mod hlc;
 pub mod ids;
 pub mod ledger;
 pub mod money;
+pub mod order;
 pub mod permissions;
 pub mod pricing;
 

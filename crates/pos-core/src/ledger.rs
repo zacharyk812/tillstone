@@ -140,6 +140,19 @@ pub fn verify_record(wire: &[u8]) -> Result<Record, LedgerError> {
     Ok(Record { header, event, hash, wire: wire.to_vec() })
 }
 
+/// Decodes a record from trusted local storage without re-checking its
+/// signature (it was verified when first received). The hash is recomputed.
+pub fn decode_trusted(wire: &[u8]) -> Result<Record, LedgerError> {
+    if wire.len() < 64 {
+        return Err(LedgerError::Malformed);
+    }
+    let body = &wire[64..];
+    let (header, payload): (Header, Vec<u8>) =
+        postcard::from_bytes(body).map_err(|_| LedgerError::Malformed)?;
+    let event = Event::decode(header.kind, header.schema, &payload)?;
+    Ok(Record { header, event, hash: hash_body(body), wire: wire.to_vec() })
+}
+
 /// Context for a new event.
 #[derive(Debug, Clone, Copy)]
 pub struct Context {
@@ -184,10 +197,11 @@ impl DeviceLog {
         &mut self.clock
     }
 
-    /// Creates, hashes and signs the next event.
-    pub fn append(&mut self, now_ms: u64, ctx: Context, event: &Event) -> Record {
-        let payload = event.encode_payload().expect("only known events are created locally");
-        let header = Header {
+    /// The header the next event would get. Nothing is committed until
+    /// [`DeviceLog::seal`], so a device can check an event first and simply
+    /// drop it if the check fails.
+    pub fn prepare(&mut self, now_ms: u64, ctx: Context, event: &Event) -> Header {
+        Header {
             format: RECORD_FORMAT,
             event_id: EventId::new(),
             device: self.device,
@@ -201,7 +215,14 @@ impl DeviceLog {
             training: ctx.training,
             kind: event.kind(),
             schema: event.schema(),
-        };
+        }
+    }
+
+    /// Hashes and signs a prepared event, making it the next in the log.
+    pub fn seal(&mut self, header: Header, event: &Event) -> Record {
+        assert_eq!(header.seq, self.seq + 1, "header was not prepared for this position");
+        assert_eq!(header.device, self.device);
+        let payload = event.encode_payload().expect("only known events are created locally");
         let body = postcard::to_allocvec(&(&header, &payload)).expect("in-memory encoding");
         let hash = hash_body(&body);
         let sig = self.key.sign(&hash);
@@ -210,6 +231,12 @@ impl DeviceLog {
         self.seq = header.seq;
         self.prev = hash;
         Record { header, event: event.clone(), hash, wire }
+    }
+
+    /// Prepares and seals in one step.
+    pub fn append(&mut self, now_ms: u64, ctx: Context, event: &Event) -> Record {
+        let header = self.prepare(now_ms, ctx, event);
+        self.seal(header, event)
     }
 }
 
@@ -247,6 +274,16 @@ pub struct ChainTracker {
 }
 
 impl ChainTracker {
+    /// Restores a tracker from saved heads (sequence and hash per device).
+    pub fn from_heads(heads: Vec<(DeviceId, u64, Hash)>) -> Self {
+        let mut t = Self::default();
+        for (d, s, h) in heads {
+            t.heads.insert(d, (s, h));
+            t.seen.insert((d, s), h);
+        }
+        t
+    }
+
     pub fn accept(&mut self, record: &Record) -> Result<Accepted, LedgerError> {
         let h = &record.header;
         if let Some(existing) = self.seen.get(&(h.device, h.seq)) {
