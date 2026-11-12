@@ -1,0 +1,6 @@
+{
+  "name": "Start from scratch",
+  "description": "One selling area and no items. Add your own in Manage.",
+  "sort": 90,
+  "areas": [{ "name": "Register", "mode": "retail" }]
+}

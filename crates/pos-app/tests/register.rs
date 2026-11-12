@@ -229,3 +229,35 @@ fn signing_in_by_name_checks_only_that_person() {
     assert!(matches!(reg.sign_in_as(maya, demo::DEMO_OWNER_PIN), Err(AppError::WrongPin { .. })));
     assert_eq!(reg.sign_in_as(maya, demo::DEMO_CASHIER_PIN).unwrap().name, "Maya");
 }
+
+#[test]
+fn every_business_template_sets_up_a_working_register() {
+    for t in pos_app::template::all() {
+        let path = temp_db(&format!("template-{}", t.id));
+        let (clock, _) = clock();
+        let setup = pos_app::BusinessSetup {
+            business_name: format!("Test {}", t.name),
+            currency: pos_core::money::Currency::JPY,
+            owner_name: "Owner".into(),
+            owner_pin: "9876".into(),
+            revenue_centers: t.areas(),
+            tax: Some(("VAT".into(), 1000, true)),
+            order_prefix: "A".into(),
+        };
+        let mut reg =
+            Register::create_with_clock(&path, &DB_KEY, &DEVICE, &OWNER, setup, clock).unwrap();
+        t.apply(&mut reg).unwrap_or_else(|e| panic!("{}: {e}", t.id));
+        let items: usize = reg.revenue_centers().iter().map(|c| reg.items(c.id).len()).sum();
+        assert_eq!(items, t.items.len(), "{}", t.id);
+        assert_eq!(reg.revenue_centers().len(), t.areas.len(), "{}", t.id);
+        // Sell the first item, if any, to prove the catalog is usable.
+        if let Some(first) = t.items.first() {
+            let center = reg.revenue_centers().into_iter().find(|c| c.name == first.area).unwrap();
+            let item = reg.items(center.id).into_iter().find(|i| i.name == first.name).unwrap();
+            let order = reg.open_order(center.id, Fulfillment::Here).unwrap();
+            let variant = item.variants.first().map(|v| v.id);
+            reg.add_item(order, item.id, variant, &[], 1).unwrap();
+            assert!(reg.order(order).unwrap().totals().unwrap().total.minor() > 0, "{}", t.id);
+        }
+    }
+}

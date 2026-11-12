@@ -1,0 +1,19 @@
+{
+  "name": "Café or coffee shop",
+  "description": "Counter service: drinks with sizes and add-ons, plus food.",
+  "sort": 10,
+  "areas": [{ "name": "Café", "mode": "quick_service" }],
+  "option_groups": [
+    { "name": "Milk", "max": 1, "options": [["Whole milk", "0"], ["Oat milk", "0.75"], ["Almond milk", "0.75"]] },
+    { "name": "Extras", "max": 3, "options": [["Extra shot", "0.75"], ["Vanilla", "0.50"], ["Decaf", "0"]] }
+  ],
+  "items": [
+    { "name": "Espresso", "area": "Café", "price": "3.00", "options": ["Extras"] },
+    { "name": "Americano", "area": "Café", "price": "3.50", "options": ["Extras"] },
+    { "name": "Latte", "area": "Café", "price": "4.75", "sizes": [["Small", "4.25"], ["Large", "5.25"]], "options": ["Milk", "Extras"] },
+    { "name": "Cappuccino", "area": "Café", "price": "4.50", "options": ["Milk", "Extras"] },
+    { "name": "Tea", "area": "Café", "price": "3.00" },
+    { "name": "Croissant", "area": "Café", "price": "3.50" },
+    { "name": "Muffin", "area": "Café", "price": "3.75" }
+  ]
+}

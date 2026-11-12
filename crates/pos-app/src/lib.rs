@@ -27,6 +27,8 @@ use pos_core::{
 use pos_store::{Store, StoreError};
 
 pub mod demo;
+pub mod owner_key;
+pub mod template;
 
 /// Wrong PINs allowed before sign-in locks (PLAN §9).
 pub const PIN_ATTEMPTS: u32 = 5;
@@ -142,13 +144,19 @@ fn system_now() -> u64 {
 }
 
 pub fn hash_pin(pin: &str) -> Result<String> {
-    if pin.len() < 4 || pin.len() > 8 || !pin.chars().all(|c| c.is_ascii_digit()) {
-        return Err(AppError::Invalid("PINs are 4 to 8 digits"));
-    }
+    hash_pin_check(pin)?;
     Argon2::default()
         .hash_password(pin.as_bytes())
         .map(|h| h.to_string())
         .map_err(|_| AppError::Invalid("couldn't hash PIN"))
+}
+
+/// Checks a PIN's format without hashing it.
+pub fn hash_pin_check(pin: &str) -> Result<()> {
+    if pin.len() < 4 || pin.len() > 8 || !pin.chars().all(|c| c.is_ascii_digit()) {
+        return Err(AppError::Invalid("PINs are 4 to 8 digits"));
+    }
+    Ok(())
 }
 
 fn pin_matches(pin: &str, hash: &str) -> bool {
@@ -319,6 +327,12 @@ impl Register {
 
     pub fn device(&self) -> DeviceId {
         self.log.device()
+    }
+
+    /// Whether `secret` is this business's owner authority key, e.g. after
+    /// unsealing it with the passphrase or reading a recovery code.
+    pub fn is_owner_secret(&self, secret: &[u8; 32]) -> bool {
+        self.book.business().is_some_and(|b| b.owner_key == ledger::owner_public(secret))
     }
 
     pub fn currency(&self) -> Currency {
