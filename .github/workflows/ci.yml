@@ -54,6 +54,11 @@ jobs:
         run: dart run tool/generate_tokens.dart --check
       - run: flutter analyze
       - run: flutter test
+      - name: Screen designs (goldens)
+        working-directory: app
+        run: |
+          flutter pub get
+          flutter test test/
 
   app:
     name: App proof (${{ matrix.platform }})
