@@ -23,4 +23,5 @@ Tillstone must look identical on Android, Windows, Linux and macOS (and iOS late
 
 - M0 proof: the bridge works on macOS (integration test passes locally). CI runs the same proof on Linux and Windows and builds Android.
 - macOS links Rust against the `SystemConfiguration`, `Security` and `CoreFoundation` frameworks (declared in the podspec), and needs CocoaPods.
+- **Never capture Rust stack backtraces inside the app.** On Linux, Flutter's GTK engine (`libflutter_linux_gtk.so`) exports its own copy of the unwinder functions; when Rust walks the stack through libgcc, the mixed unwinders crash the app with a segfault. So the bridge doesn't call flutter_rust_bridge's `setup_default_user_utils()` (which sets `RUST_BACKTRACE=1`), installs a panic hook that reports only the message and location, and library crates use plain error enums instead of `anyhow`. Found via the Linux M0 proof; worth reporting upstream.
 - Contributors need both Rust and Flutter installed; `CONTRIBUTING.md` documents setup.

@@ -11,7 +11,6 @@ description = "Bridge between the Tillstone Flutter app and the Rust core"
 crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
-anyhow = "1"
 flutter_rust_bridge = "=2.13.0"
 pos-core = { path = "../pos-core" }
 pos-sync = { path = "../pos-sync" }

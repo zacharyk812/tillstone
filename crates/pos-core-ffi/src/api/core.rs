@@ -8,7 +8,13 @@ use pos_sync::{DeviceIdentity, Members, Peer, PeerOptions};
 
 #[flutter_rust_bridge::frb(init)]
 pub fn init_app() {
-    flutter_rust_bridge::setup_default_user_utils();
+    // Not `flutter_rust_bridge::setup_default_user_utils()`: it sets
+    // RUST_BACKTRACE=1, and capturing a stack backtrace inside Flutter's Linux
+    // engine crashes the app (its bundled unwinder clashes with libgcc's).
+    // Report panics with their message and location only. See ADR 0002.
+    std::panic::set_hook(Box::new(|info| {
+        eprintln!("tillstone: Rust panic: {info}");
+    }));
 }
 
 /// Version of the Rust core.
@@ -39,10 +45,10 @@ pub struct PeerSelfTest {
 /// Starts two peers inside the app, sends a signed message between them over
 /// an encrypted iroh connection, and checks a non-member is refused.
 pub async fn peer_self_test() -> Result<PeerSelfTest, String> {
-    run_self_test().await.map_err(|e| format!("{e:#}"))
+    run_self_test().await.map_err(|e| e.to_string())
 }
 
-async fn run_self_test() -> anyhow::Result<PeerSelfTest> {
+async fn run_self_test() -> pos_sync::Result<PeerSelfTest> {
     let (a_id, b_id, outsider_id) =
         (DeviceIdentity::generate(), DeviceIdentity::generate(), DeviceIdentity::generate());
     let members = Members::default();
@@ -57,8 +63,10 @@ async fn run_self_test() -> anyhow::Result<PeerSelfTest> {
     let started = Instant::now();
     a.send(b.direct_addr(), b"order A-0001 closed").await?;
     let received = tokio::time::timeout(Duration::from_secs(5), b_rx.recv())
-        .await?
-        .ok_or_else(|| anyhow::anyhow!("no message received"))?;
+        .await
+        .ok()
+        .flatten()
+        .ok_or(pos_sync::SyncError::Timeout)?;
     let round_trip_ms = started.elapsed().as_millis() as u64;
 
     let outsider_members = Members::default();

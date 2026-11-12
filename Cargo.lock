@@ -3377,7 +3377,6 @@ dependencies = [
 name = "tillstone_ffi"
 version = "0.0.1"
 dependencies = [
- "anyhow",
  "flutter_rust_bridge",
  "pos-core",
  "pos-sync",

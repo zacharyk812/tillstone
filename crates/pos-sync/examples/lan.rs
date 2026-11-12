@@ -91,7 +91,7 @@ async fn main() -> Result<()> {
                         eprintln!("attempt {attempt}: {e:#}; retrying");
                         tokio::time::sleep(Duration::from_secs(1)).await;
                     }
-                    Err(e) => return Err(e),
+                    Err(e) => return Err(e.into()),
                 }
             }
         }

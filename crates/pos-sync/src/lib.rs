@@ -14,7 +14,6 @@ use std::{
     time::Duration,
 };
 
-use anyhow::{Context, Result, bail, ensure};
 use iroh::{
     Endpoint, EndpointAddr, EndpointId, PublicKey, RelayMode, SecretKey, Signature,
     endpoint::{Connection, presets},
@@ -34,6 +33,59 @@ pub const MAX_PAYLOAD: usize = 64 * 1024;
 
 /// QUIC application close code sent to devices that aren't members.
 pub const CLOSE_NOT_A_MEMBER: u32 = 403;
+
+/// Errors from peer-to-peer messaging.
+///
+/// Deliberately a plain enum rather than `anyhow`: these errors never capture
+/// stack backtraces, which crash inside Flutter's Linux engine (ADR 0002).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum SyncError {
+    /// The local endpoint couldn't start.
+    Bind(String),
+    /// Local network discovery couldn't start.
+    Discovery(String),
+    /// The other device didn't answer in time.
+    Timeout,
+    /// Couldn't open an encrypted connection.
+    Connect(String),
+    /// The connection or stream failed mid-exchange.
+    Transport(String),
+    /// The device at the other end isn't the one we asked for.
+    WrongPeer,
+    /// The other device isn't a member of this business.
+    NotAMember,
+    /// The payload is larger than [`MAX_PAYLOAD`].
+    PayloadTooLarge,
+    /// A message couldn't be decoded.
+    Malformed(&'static str),
+    /// A signature didn't verify.
+    BadSignature,
+}
+
+impl std::fmt::Display for SyncError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Bind(e) => write!(f, "couldn't start networking: {e}"),
+            Self::Discovery(e) => write!(f, "couldn't start local discovery: {e}"),
+            Self::Timeout => f.write_str("the other device didn't answer in time"),
+            Self::Connect(e) => write!(f, "couldn't connect: {e}"),
+            Self::Transport(e) => write!(f, "connection failed: {e}"),
+            Self::WrongPeer => f.write_str("connected to the wrong device"),
+            Self::NotAMember => f.write_str("device is not a member of this business"),
+            Self::PayloadTooLarge => f.write_str("message too large"),
+            Self::Malformed(why) => write!(f, "malformed message: {why}"),
+            Self::BadSignature => f.write_str("signature didn't verify"),
+        }
+    }
+}
+
+impl std::error::Error for SyncError {}
+
+pub type Result<T, E = SyncError> = std::result::Result<T, E>;
+
+fn transport(e: impl std::fmt::Display) -> SyncError {
+    SyncError::Transport(e.to_string())
+}
 
 /// A device's long-lived identity. The same Ed25519 key authenticates the
 /// encrypted connection and signs messages.
@@ -80,7 +132,7 @@ impl SignedMessage {
     pub fn verify(&self) -> Result<()> {
         self.signer
             .verify(&domain(MESSAGE_DOMAIN, &self.payload), &self.signature)
-            .context("invalid message signature")
+            .map_err(|_| SyncError::BadSignature)
     }
 
     pub fn encode(&self) -> Vec<u8> {
@@ -93,12 +145,20 @@ impl SignedMessage {
     }
 
     pub fn decode(bytes: &[u8]) -> Result<Self> {
-        ensure!(bytes.len() >= 100, "message too short");
-        let signer = PublicKey::from_bytes(bytes[0..32].try_into()?).context("bad signer key")?;
-        let signature = Signature::from_bytes(bytes[32..96].try_into()?);
-        let len = u32::from_be_bytes(bytes[96..100].try_into()?) as usize;
-        ensure!(len <= MAX_PAYLOAD, "payload too large");
-        ensure!(bytes.len() == 100 + len, "length mismatch");
+        if bytes.len() < 100 {
+            return Err(SyncError::Malformed("too short"));
+        }
+        let signer_bytes: &[u8; 32] = bytes[0..32].try_into().expect("checked length");
+        let signer = PublicKey::from_bytes(signer_bytes)
+            .map_err(|_| SyncError::Malformed("bad signer key"))?;
+        let signature = Signature::from_bytes(bytes[32..96].try_into().expect("checked length"));
+        let len = u32::from_be_bytes(bytes[96..100].try_into().expect("checked length")) as usize;
+        if len > MAX_PAYLOAD {
+            return Err(SyncError::PayloadTooLarge);
+        }
+        if bytes.len() != 100 + len {
+            return Err(SyncError::Malformed("length mismatch"));
+        }
         Ok(Self { signer, payload: bytes[100..].to_vec(), signature })
     }
 }
@@ -172,14 +232,14 @@ impl Peer {
             .alpns(vec![ALPN.to_vec()])
             .bind()
             .await
-            .context("binding endpoint")?;
+            .map_err(|e| SyncError::Bind(e.to_string()))?;
 
         if options.local_discovery {
             let mdns = MdnsAddressLookup::builder()
                 .service_name("tillstone")
                 .build(endpoint.id())
-                .context("starting local discovery")?;
-            endpoint.address_lookup()?.add(mdns);
+                .map_err(|e| SyncError::Discovery(e.to_string()))?;
+            endpoint.address_lookup().map_err(|e| SyncError::Discovery(e.to_string()))?.add(mdns);
         }
 
         tokio::spawn(accept_loop(endpoint.clone(), identity.clone(), members.clone(), inbox));
@@ -214,27 +274,35 @@ impl Peer {
     /// Signs `payload`, sends it to `to`, and waits for the recipient's signed
     /// acknowledgement.
     pub async fn send(&self, to: impl Into<EndpointAddr>, payload: &[u8]) -> Result<()> {
-        ensure!(payload.len() <= MAX_PAYLOAD, "payload too large");
+        if payload.len() > MAX_PAYLOAD {
+            return Err(SyncError::PayloadTooLarge);
+        }
         let to = to.into();
         let recipient = to.id;
-        ensure!(self.members.contains(&recipient), "recipient is not a member");
+        if !self.members.contains(&recipient) {
+            return Err(SyncError::NotAMember);
+        }
 
         let conn = tokio::time::timeout(Duration::from_secs(10), self.endpoint.connect(to, ALPN))
             .await
-            .context("connection timed out")?
-            .context("connecting")?;
+            .map_err(|_| SyncError::Timeout)?
+            .map_err(|e| SyncError::Connect(e.to_string()))?;
         // The encrypted handshake already proved the remote holds this key.
-        ensure!(conn.remote_id() == recipient, "connected to the wrong peer");
+        if conn.remote_id() != recipient {
+            return Err(SyncError::WrongPeer);
+        }
 
-        let (mut send, mut recv) = conn.open_bi().await?;
-        send.write_all(&self.identity.sign(payload).encode()).await?;
-        send.finish()?;
+        let (mut send, mut recv) = conn.open_bi().await.map_err(transport)?;
+        send.write_all(&self.identity.sign(payload).encode()).await.map_err(transport)?;
+        send.finish().map_err(transport)?;
 
-        let ack = recv.read_to_end(Signature::LENGTH).await.context("no acknowledgement")?;
-        let ack = Signature::from_bytes(ack.as_slice().try_into().context("bad acknowledgement")?);
+        // A refused (non-member) connection is closed before any reply.
+        let ack = recv.read_to_end(Signature::LENGTH).await.map_err(transport)?;
+        let ack: &[u8; Signature::LENGTH] =
+            ack.as_slice().try_into().map_err(|_| SyncError::Malformed("bad acknowledgement"))?;
         recipient
-            .verify(&domain(ACK_DOMAIN, payload), &ack)
-            .context("acknowledgement signature invalid")?;
+            .verify(&domain(ACK_DOMAIN, payload), &Signature::from_bytes(ack))
+            .map_err(|_| SyncError::BadSignature)?;
 
         conn.close(0u32.into(), b"done");
         Ok(())
@@ -268,16 +336,16 @@ async fn accept_loop(
 }
 
 async fn handle(conn: &Connection, identity: &DeviceIdentity) -> Result<Received> {
-    let (mut send, mut recv) = conn.accept_bi().await?;
-    let bytes = recv.read_to_end(100 + MAX_PAYLOAD).await?;
+    let (mut send, mut recv) = conn.accept_bi().await.map_err(transport)?;
+    let bytes = recv.read_to_end(100 + MAX_PAYLOAD).await.map_err(transport)?;
     let message = SignedMessage::decode(&bytes)?;
     message.verify()?;
     if message.signer != conn.remote_id() {
-        bail!("message signer doesn't match the connected device");
+        return Err(SyncError::WrongPeer);
     }
     let ack = identity.secret.sign(&domain(ACK_DOMAIN, &message.payload));
-    send.write_all(&ack.to_bytes()).await?;
-    send.finish()?;
+    send.write_all(&ack.to_bytes()).await.map_err(transport)?;
+    send.finish().map_err(transport)?;
     Ok(Received { from: message.signer, payload: message.payload })
 }
 

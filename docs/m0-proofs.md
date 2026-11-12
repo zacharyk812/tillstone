@@ -17,7 +17,7 @@ flutter test integration_test -d macos     # or: -d windows, -d linux, or an And
 | Platform | Result |
 |---|---|
 | macOS | ✅ passes locally |
-| Linux | ❌ app exits during the peer self-test in CI; investigating |
+| Linux | ✅ passes in CI (after the backtrace fix in ADR 0002) |
 | Windows | ✅ passes in CI |
 | Android | ✅ APK builds in CI; run the test on a device as below |
 
